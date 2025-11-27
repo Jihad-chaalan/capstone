@@ -10,13 +10,16 @@ import { useAuthStore } from "../store/authStore";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
+import SeekerProfilePage from "../pages/SeekerProfilePage";
+import CompanyProfilePage from "../pages/CompanyProfilePage";
+import UniversityProfilePage from "../pages/UniversityProfilePage";
 
 const ProtectedRoute = () => {
   const { token, user, fetchUser, isLoading } = useAuthStore();
 
   useEffect(() => {
     if (token && !user) fetchUser();
-  }, [token, user]);
+  }, [token, user, fetchUser]);
 
   if (isLoading)
     return (
@@ -43,6 +46,12 @@ export const AppRouter = () => {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<SeekerProfilePage />} />
+          <Route path="/company/profile" element={<CompanyProfilePage />} />
+          <Route
+            path="/university/profile"
+            element={<UniversityProfilePage />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

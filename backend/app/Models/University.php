@@ -16,6 +16,10 @@ class University extends Model
      */
     protected $fillable = [
         'user_id',
+        'address',
+        'website_link',
+        'description',
+        'logo',
     ];
 
     /**

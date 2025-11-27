@@ -58,12 +58,23 @@ class UniversityController extends Controller
         }
 
         $validated = $request->validate([
-            // Add any university-specific fields here
-            // For now, university table only has user_id
-            // You can add fields like: address, website, description, logo, etc.
+            'address' => 'nullable|string|max:255',
+            'website_link' => 'nullable|url|max:255',
+            'description' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $university = $request->user()->university;
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            // Delete old logo
+            if ($university->logo) {
+                Storage::disk('public')->delete($university->logo);
+            }
+            $validated['logo'] = $request->file('logo')->store('universities', 'public');
+        }
+
         $university->update($validated);
 
         return response()->json([

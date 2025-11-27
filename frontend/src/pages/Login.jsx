@@ -23,7 +23,18 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     const result = await login(data);
-    if (result.success) navigate("/dashboard");
+    // if (result.success) navigate("/dashboard");
+    if (result.success) {
+      if (result.user?.role === "seeker") {
+        navigate("/profile");
+      } else if (result.user?.role === "university") {
+        navigate("/university/profile");
+      } else if (result.user?.role === "company") {
+        navigate("/company/profile");
+      } else {
+        navigate("/dashboard");
+      }
+    }
   };
 
   return (

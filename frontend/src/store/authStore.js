@@ -43,7 +43,7 @@ export const useAuthStore = create(
 
           set({ user, token, isLoading: false });
           localStorage.setItem("auth_token", token);
-          return { success: true };
+          return { success: true, user };
         } catch (error) {
           set({
             error: error.response?.data?.message || "Login failed",
