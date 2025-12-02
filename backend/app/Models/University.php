@@ -29,4 +29,12 @@ class University extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the internship requests made by this university.
+     */
+    public function internshipRequests()
+    {
+        return $this->hasMany(InternshipRequest::class);
+    }
 }

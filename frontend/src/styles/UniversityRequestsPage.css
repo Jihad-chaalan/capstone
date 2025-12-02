@@ -1,0 +1,359 @@
+.uni-req-page {
+  min-height: 100vh;
+  background: #f3f2ef;
+}
+
+.uni-req-navbar {
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.uni-req-navbar-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.uni-req-navbar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.uni-req-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.uni-req-menu-container {
+  position: relative;
+}
+
+.uni-req-menu-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #666;
+}
+
+.uni-req-menu-button:hover {
+  color: #0073b1;
+}
+
+.uni-req-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  z-index: 1000;
+  margin-top: 0.5rem;
+}
+
+.uni-req-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.uni-req-dropdown-item:hover {
+  background: #f3f2ef;
+}
+
+.uni-req-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.uni-req-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.uni-req-header h1 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+.uni-req-btn-primary {
+  background: #0073b1;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.uni-req-btn-primary:hover {
+  background: #005582;
+}
+
+.uni-req-btn-secondary {
+  background: white;
+  color: #0073b1;
+  border: 1px solid #0073b1;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.uni-req-btn-secondary:hover {
+  background: #f3f2ef;
+}
+
+.uni-req-form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.uni-req-form-card h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.uni-req-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.uni-req-form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.uni-req-input,
+.uni-req-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.uni-req-input:focus,
+.uni-req-textarea:focus {
+  outline: none;
+  border-color: #0073b1;
+}
+
+.uni-req-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.uni-req-list {
+  margin-top: 2rem;
+}
+
+.uni-req-list h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.uni-req-empty {
+  text-align: center;
+  color: #666;
+  padding: 3rem;
+  background: white;
+  border-radius: 12px;
+}
+
+.uni-req-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.uni-req-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s;
+}
+
+.uni-req-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.uni-req-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.uni-req-card-header h3 {
+  margin: 0;
+  color: #0073b1;
+  font-size: 1.25rem;
+}
+
+.uni-req-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.uni-req-badge-pending {
+  background: #fff4e5;
+  color: #cc7700;
+}
+
+.uni-req-badge-accepted {
+  background: #e7f7e7;
+  color: #057e05;
+}
+
+.uni-req-badge-rejected {
+  background: #ffe5e5;
+  color: #cc0000;
+}
+
+.uni-req-card-body p {
+  margin: 0.5rem 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.uni-req-company,
+.uni-req-tech,
+.uni-req-students {
+  font-size: 0.9rem;
+}
+
+.uni-req-description {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+  line-height: 1.6;
+}
+
+.uni-req-response {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f3f2ef;
+  border-radius: 8px;
+  border-left: 3px solid #0073b1;
+}
+
+.uni-req-response strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.uni-req-date {
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 1rem;
+}
+
+.uni-req-card-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.uni-req-btn-edit,
+.uni-req-btn-delete {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.uni-req-btn-edit {
+  background: #0073b1;
+  color: white;
+}
+
+.uni-req-btn-edit:hover {
+  background: #005582;
+}
+
+.uni-req-btn-delete {
+  background: #dc3545;
+  color: white;
+}
+
+.uni-req-btn-delete:hover {
+  background: #c82333;
+}
+
+.uni-req-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.25rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .uni-req-navbar-content {
+    padding: 1rem;
+  }
+
+  .uni-req-container {
+    padding: 1rem;
+  }
+
+  .uni-req-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .uni-req-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .uni-req-navbar-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

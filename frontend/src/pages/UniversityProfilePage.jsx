@@ -1,5 +1,6 @@
 import "../styles/UniversityProfilePage.css";
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/client";
 
 const UniversityProfilePage = () => {
@@ -22,6 +23,7 @@ const UniversityProfilePage = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api
@@ -214,6 +216,12 @@ const UniversityProfilePage = () => {
           </p>
         </div>
       </div>
+      <button
+        onClick={() => navigate("/university/requests")}
+        className="university-profile-btn-requests"
+      >
+        Manage Requests
+      </button>
 
       {/* Edit Form Card */}
       <div className="university-profile-form-card">

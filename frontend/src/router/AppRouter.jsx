@@ -14,6 +14,7 @@ import SeekerProfilePage from "../pages/SeekerProfilePage";
 import CompanyProfilePage from "../pages/CompanyProfilePage";
 import UniversityProfilePage from "../pages/UniversityProfilePage";
 import SeekerPostsPage from "../pages/SeekerPostPage";
+import UniversityRequestsPage from "../pages/UniversityRequestPage";
 
 const ProtectedRoute = () => {
   const { token, user, fetchUser, isLoading } = useAuthStore();
@@ -53,6 +54,10 @@ export const AppRouter = () => {
           <Route
             path="/university/profile"
             element={<UniversityProfilePage />}
+          />
+          <Route
+            path="/university/requests"
+            element={<UniversityRequestsPage />}
           />
         </Route>
       </Routes>

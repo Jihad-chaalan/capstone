@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\UniversityController;
+use App\Http\Controllers\Api\InternshipRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,6 +75,11 @@ Route::middleware('auth:sanctum')->group(function () {
         // Company applications
         Route::get('/company/applications', [ApplicationController::class, 'myCompanyApplications']);
         Route::get('/posts/{postId}/applications', [ApplicationController::class, 'getPostApplications']);
+
+        // Company internship requests
+        Route::get('/company/requests', [InternshipRequestController::class, 'companyRequests']);
+        Route::post('/internship-requests/{id}/accept', [InternshipRequestController::class, 'acceptRequest']);
+        Route::post('/internship-requests/{id}/reject', [InternshipRequestController::class, 'rejectRequest']);
     });
 
     // Seeker routes
@@ -97,5 +103,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('university')->group(function () {
         Route::get('/university/me', [UniversityController::class, 'me']);
         Route::put('/university/update', [UniversityController::class, 'update']);
+
+        // University internship requests
+        Route::get('/university/requests', [InternshipRequestController::class, 'index']);
+        Route::post('/internship-requests', [InternshipRequestController::class, 'store']);
+        Route::put('/internship-requests/{id}', [InternshipRequestController::class, 'update']);
+        Route::delete('/internship-requests/{id}', [InternshipRequestController::class, 'destroy']);
     });
 });

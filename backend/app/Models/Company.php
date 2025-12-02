@@ -26,4 +26,11 @@ class Company extends Model
     {
         return $this->hasMany(Post::class);
     }
+    /**
+     * Get the internship requests received by this company.
+     */
+    public function internshipRequests()
+    {
+        return $this->hasMany(InternshipRequest::class);
+    }
 }

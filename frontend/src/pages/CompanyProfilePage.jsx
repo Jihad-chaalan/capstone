@@ -30,6 +30,33 @@ const CompanyProfilePage = () => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
 
+  // Post management state
+  const [posts, setPosts] = useState([]);
+  const [postForm, setPostForm] = useState({
+    position: "",
+    technology: "",
+    description: "",
+  });
+  const [postPhotoFile, setPostPhotoFile] = useState(null);
+  const [postPhotoPreview, setPostPhotoPreview] = useState("");
+  const [editingPostId, setEditingPostId] = useState(null);
+  const [postSaving, setPostSaving] = useState(false);
+  const [postError, setPostError] = useState(null);
+  const [postSuccess, setPostSuccess] = useState(false);
+  const postFileInputRef = useRef(null);
+
+  // Applicants state
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [applicants, setApplicants] = useState([]);
+  const [loadingApplicants, setLoadingApplicants] = useState(false);
+  const [showApplicantsModal, setShowApplicantsModal] = useState(false);
+
+  // University requests state
+  const [incomingRequests, setIncomingRequests] = useState([]);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [responseText, setResponseText] = useState("");
+
   const handleLogout = async () => {
     await logout();
     navigate("/login");
@@ -55,27 +82,6 @@ const CompanyProfilePage = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu]);
-
-  // Post management state
-  const [posts, setPosts] = useState([]);
-  const [postForm, setPostForm] = useState({
-    position: "",
-    technology: "",
-    description: "",
-  });
-  const [postPhotoFile, setPostPhotoFile] = useState(null);
-  const [postPhotoPreview, setPostPhotoPreview] = useState("");
-  const [editingPostId, setEditingPostId] = useState(null);
-  const [postSaving, setPostSaving] = useState(false);
-  const [postError, setPostError] = useState(null);
-  const [postSuccess, setPostSuccess] = useState(false);
-  const postFileInputRef = useRef(null);
-
-  // Applicants state
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [applicants, setApplicants] = useState([]);
-  const [loadingApplicants, setLoadingApplicants] = useState(false);
-  const [showApplicantsModal, setShowApplicantsModal] = useState(false);
 
   const loadProfile = () => {
     api
@@ -115,8 +121,21 @@ const CompanyProfilePage = () => {
       });
   };
 
+  const fetchIncomingRequests = async () => {
+    try {
+      const res = await api.get("/company/requests");
+      setIncomingRequests(res.data.data);
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+    }
+  };
+
   useEffect(() => {
-    loadProfile();
+    const loadData = async () => {
+      loadProfile();
+      await fetchIncomingRequests();
+    };
+    loadData();
   }, []);
 
   const handleInputChange = (e) => {
@@ -309,6 +328,46 @@ const CompanyProfilePage = () => {
     setApplicants([]);
   };
 
+  // University request handlers
+  const handleAcceptRequest = async (requestId) => {
+    try {
+      await api.post(`/internship-requests/${requestId}/accept`, {
+        response: responseText,
+      });
+      setShowRequestModal(false);
+      setResponseText("");
+      fetchIncomingRequests();
+      alert("Request accepted successfully!");
+    } catch (error) {
+      console.error("Error accepting request:", error);
+      alert("Failed to accept request");
+    }
+  };
+
+  const handleRejectRequest = async (requestId) => {
+    try {
+      await api.post(`/internship-requests/${requestId}/reject`, {
+        response: responseText,
+      });
+      setShowRequestModal(false);
+      setResponseText("");
+      fetchIncomingRequests();
+      alert("Request rejected");
+    } catch (error) {
+      console.error("Error rejecting request:", error);
+      alert("Failed to reject request");
+    }
+  };
+
+  const getRequestStatusBadge = (status) => {
+    const badges = {
+      pending: "status-pending",
+      accepted: "status-accepted",
+      rejected: "status-rejected",
+    };
+    return badges[status] || "status-pending";
+  };
+
   if (loading)
     return (
       <div className="company-profile-loading">Loading your profile...</div>
@@ -368,7 +427,7 @@ const CompanyProfilePage = () => {
       </nav>
 
       <div className="company-profile-container">
-        {/* Public Profile View - How others see it */}
+        {/* Public Profile View */}
         <div className="company-profile-header">
           <div className="company-profile-banner"></div>
           <div className="company-profile-info-section">
@@ -447,6 +506,70 @@ const CompanyProfilePage = () => {
               {companyData.description}
             </p>
           </div>
+        </div>
+
+        {/* University Requests Section */}
+        <div className="company-requests-section">
+          <h2 className="company-profile-section-title">
+            Internship Requests from Universities
+          </h2>
+          {incomingRequests.length === 0 ? (
+            <p className="company-requests-empty">No requests yet.</p>
+          ) : (
+            <div className="company-requests-list">
+              {incomingRequests.map((request) => (
+                <div key={request.id} className="company-request-card">
+                  <div className="company-request-header">
+                    <h3 className="company-request-title">
+                      {request.position}
+                    </h3>
+                    <span
+                      className={`request-status-badge ${getRequestStatusBadge(
+                        request.status
+                      )}`}
+                    >
+                      {request.status}
+                    </span>
+                  </div>
+                  <div className="company-request-body">
+                    <p>
+                      <strong>University:</strong>{" "}
+                      {request.university?.user?.name}
+                    </p>
+                    <p>
+                      <strong>Technology:</strong> {request.technology}
+                    </p>
+                    <p>
+                      <strong>Students Needed:</strong>{" "}
+                      {request.number_of_students}
+                    </p>
+                    <p>
+                      <strong>Description:</strong> {request.description}
+                    </p>
+                    {request.company_response && (
+                      <div className="company-request-response">
+                        <strong>Your Response:</strong>
+                        <p>{request.company_response}</p>
+                      </div>
+                    )}
+                  </div>
+                  {request.status === "pending" && (
+                    <div className="company-request-actions">
+                      <button
+                        onClick={() => {
+                          setSelectedRequest(request);
+                          setShowRequestModal(true);
+                        }}
+                        className="btn-view-request"
+                      >
+                        Respond
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Posts Section with Applicant Count */}
@@ -656,6 +779,85 @@ const CompanyProfilePage = () => {
                     ))}
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Request Response Modal */}
+        {showRequestModal && selectedRequest && (
+          <div
+            className="company-modal-overlay"
+            onClick={() => setShowRequestModal(false)}
+          >
+            <div
+              className="company-modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="company-modal-header">
+                <h2 className="company-modal-title">Respond to Request</h2>
+                <button
+                  onClick={() => setShowRequestModal(false)}
+                  className="company-modal-close"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="company-modal-body">
+                <p>
+                  <strong>Position:</strong> {selectedRequest.position}
+                </p>
+                <p>
+                  <strong>University:</strong>{" "}
+                  {selectedRequest.university?.user?.name}
+                </p>
+                <p>
+                  <strong>Technology:</strong> {selectedRequest.technology}
+                </p>
+                <p>
+                  <strong>Students:</strong>{" "}
+                  {selectedRequest.number_of_students}
+                </p>
+                <p>
+                  <strong>Description:</strong> {selectedRequest.description}
+                </p>
+
+                <div className="company-profile-form-group">
+                  <label className="company-profile-label">
+                    Response Message (optional)
+                  </label>
+                  <textarea
+                    value={responseText}
+                    onChange={(e) => setResponseText(e.target.value)}
+                    placeholder="Add a message to the university..."
+                    rows={4}
+                    className="company-profile-textarea"
+                  />
+                </div>
+
+                <div className="modal-actions">
+                  <button
+                    onClick={() => handleAcceptRequest(selectedRequest.id)}
+                    className="btn-accept"
+                  >
+                    Accept Request
+                  </button>
+                  <button
+                    onClick={() => handleRejectRequest(selectedRequest.id)}
+                    className="btn-reject"
+                  >
+                    Reject Request
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowRequestModal(false);
+                      setResponseText("");
+                    }}
+                    className="btn-cancel"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
