@@ -26,11 +26,11 @@ export default function Login() {
     // if (result.success) navigate("/dashboard");
     if (result.success) {
       if (result.user?.role === "seeker") {
-        navigate("/profile");
-      } else if (result.user?.role === "university") {
-        navigate("/university/profile");
+        navigate("/posts");
       } else if (result.user?.role === "company") {
         navigate("/company/profile");
+      } else if (result.user?.role === "university") {
+        navigate("/university/profile");
       } else {
         navigate("/dashboard");
       }

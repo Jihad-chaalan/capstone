@@ -96,7 +96,9 @@ class CompanyController extends Controller
             ], 403);
         }
 
-        $company = $request->user()->company->load(['user', 'posts']);
+        $company = $request->user()->company->load(['user', 'posts' => function ($query) {
+            $query->withCount('applications');
+        }]);
 
         return response()->json([
             'success' => true,
