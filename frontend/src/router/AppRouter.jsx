@@ -15,6 +15,10 @@ import CompanyProfilePage from "../pages/CompanyProfilePage";
 import UniversityProfilePage from "../pages/UniversityProfilePage";
 import SeekerPostsPage from "../pages/SeekerPostPage";
 import UniversityRequestsPage from "../pages/UniversityRequestPage";
+import AdminDashboard from "../pages/AdminDashboard";
+import AdminUsersPage from "../pages/AdminUsersPage";
+import AdminPostsPage from "../pages/AdminPosts";
+import AdminApplicationsPage from "../pages/AdminApplicationsPage";
 
 const ProtectedRoute = () => {
   const { token, user, fetchUser, isLoading } = useAuthStore();
@@ -51,6 +55,13 @@ export const AppRouter = () => {
           <Route path="/posts" element={<SeekerPostsPage />} />
           <Route path="/profile" element={<SeekerProfilePage />} />
           <Route path="/company/profile" element={<CompanyProfilePage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/posts" element={<AdminPostsPage />} />
+          <Route
+            path="/admin/applications"
+            element={<AdminApplicationsPage />}
+          />
           <Route
             path="/university/profile"
             element={<UniversityProfilePage />}

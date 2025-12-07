@@ -31,6 +31,8 @@ export default function Login() {
         navigate("/company/profile");
       } else if (result.user?.role === "university") {
         navigate("/university/profile");
+      } else if (result.user?.role === "admin") {
+        navigate("/admin");
       } else {
         navigate("/dashboard");
       }

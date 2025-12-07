@@ -1,0 +1,63 @@
+/* This file extends AdminDashboard.css for the subpages */
+@import './AdminDashboard.css';
+
+/* Quick links */
+.admin-quick-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.admin-quick-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-quick-link-btn:hover {
+  border-color: #0073b1;
+  background: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.admin-quick-link-btn svg {
+  flex-shrink: 0;
+}
+
+/* Back button */
+.admin-nav-back-btn {
+  padding: 0.5rem 1rem;
+  background: white;
+  color: #0073b1;
+  border: 1px solid #0073b1;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.admin-nav-back-btn:hover {
+  background: #f3f2ef;
+}
+
+/* Make stat cards clickable */
+.admin-stat-card {
+  transition: all 0.2s;
+}
+
+.admin-stat-card[style*="cursor: pointer"]:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  border: 2px solid #0073b1;
+}
