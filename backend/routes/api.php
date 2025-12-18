@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\InternshipRequestController;
 use App\Http\Controllers\Api\AdminCompanyController;
+use App\Http\Controllers\Api\SkillController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,9 @@ Route::get('/seekers/{id}', [SeekerController::class, 'show']);
 Route::get('/seekers/{seekerId}/projects', [ProjectController::class, 'index']);
 Route::get('/projects/{id}', [ProjectController::class, 'show']);
 
+// Public - Get active skills (for seeker selection)
+Route::get('/skills', [SkillController::class, 'index']);
+
 // Protected routes (requires authentication)
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -66,6 +70,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/companies/{id}/verify', [AdminCompanyController::class, 'verify']);
         Route::post('/companies/{id}/reject', [AdminCompanyController::class, 'reject']);
         Route::get('/companies/{id}/certificate', [AdminCompanyController::class, 'getCertificate']);
+
+        // Skills management (admin only)
+        Route::get('/skills', [SkillController::class, 'adminIndex']);
+        Route::post('/skills', [SkillController::class, 'store']);
+        Route::put('/skills/{id}', [SkillController::class, 'update']);
+        Route::delete('/skills/{id}', [SkillController::class, 'destroy']);
+        Route::post('/skills/{id}/toggle-status', [SkillController::class, 'toggleStatus']);
     });
 
     // Company routes

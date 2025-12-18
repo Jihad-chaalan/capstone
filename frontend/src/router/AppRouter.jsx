@@ -20,6 +20,7 @@ import AdminUsersPage from "../pages/AdminUsersPage";
 import AdminPostsPage from "../pages/AdminPosts";
 import AdminApplicationsPage from "../pages/AdminApplicationsPage";
 import AdminCompaniesPage from "../pages/AdminCompaniesPage";
+import AdminSkillsPage from "../pages/AdminSkillsPage";
 
 const ProtectedRoute = () => {
   const { token, user, fetchUser, isLoading } = useAuthStore();
@@ -64,6 +65,7 @@ export const AppRouter = () => {
             path="/admin/applications"
             element={<AdminApplicationsPage />}
           />
+          <Route path="/admin/skills" element={<AdminSkillsPage />} />
           <Route
             path="/university/profile"
             element={<UniversityProfilePage />}

@@ -192,3 +192,85 @@
 .btn-secondary:hover {
   background: #4b5563;
 }
+
+/* Skills selection */
+.skills-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.skill-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.skill-checkbox input[type="checkbox"] {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.skill-checkbox:hover {
+  border-color: #0a66c2;
+  background: #f3f6f8;
+}
+
+.skill-checkbox input[type="checkbox"]:checked + .skill-badge {
+  color: #0a66c2;
+  font-weight: 600;
+}
+
+.skill-badge {
+  font-size: 14px;
+  color: #666;
+}
+
+.skill-badge-display {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #0a66c2;
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+
+.skills-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.status-toggle {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-toggle.active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-toggle.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.help-text {
+  font-size: 13px;
+  color: #666;
+  margin-top: 8px;
+}

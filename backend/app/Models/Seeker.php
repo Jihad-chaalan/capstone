@@ -53,4 +53,12 @@ class Seeker extends Model
         return $this->belongsToMany(Post::class, 'applications', 'internship_seeker_id', 'internship_post_id')
             ->withTimestamps();
     }
+
+    /**
+     * Skills relationship (many-to-many)
+     */
+    public function skillsList()
+    {
+        return $this->belongsToMany(Skill::class, 'seeker_skill');
+    }
 }

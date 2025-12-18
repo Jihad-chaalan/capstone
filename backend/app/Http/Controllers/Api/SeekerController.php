@@ -7,7 +7,6 @@ use App\Models\Seeker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-
 class SeekerController extends Controller
 {
     /**
@@ -15,11 +14,14 @@ class SeekerController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Seeker::with(['user', 'projects']);
+        $query = Seeker::with(['user', 'projects', 'skillsList']);
 
-        // Filter by skills
-        if ($request->has('skills')) {
-            $query->where('skills', 'like', '%' . $request->skills . '%');
+        // Filter by skills (using the new relationship)
+        if ($request->has('skill_ids')) {
+            $skillIds = explode(',', $request->skill_ids);
+            $query->whereHas('skillsList', function ($q) use ($skillIds) {
+                $q->whereIn('skills.id', $skillIds);
+            });
         }
 
         $seekers = $query->paginate(15);
@@ -35,7 +37,7 @@ class SeekerController extends Controller
      */
     public function show($id)
     {
-        $seeker = Seeker::with(['user', 'projects'])->findOrFail($id);
+        $seeker = Seeker::with(['user', 'projects', 'skillsList'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -56,9 +58,10 @@ class SeekerController extends Controller
         }
 
         $validated = $request->validate([
-            'skills' => 'nullable|string',
             'description' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'skill_ids' => 'nullable|array',
+            'skill_ids.*' => 'exists:skills,id',
         ]);
 
         $seeker = $request->user()->seeker;
@@ -72,12 +75,21 @@ class SeekerController extends Controller
             $validated['photo'] = $request->file('photo')->store('seekers', 'public');
         }
 
-        $seeker->update($validated);
+        // Update basic info
+        $seeker->update([
+            'description' => $validated['description'] ?? $seeker->description,
+            'photo' => $validated['photo'] ?? $seeker->photo,
+        ]);
+
+        // Sync skills (many-to-many)
+        if (isset($validated['skill_ids'])) {
+            $seeker->skillsList()->sync($validated['skill_ids']);
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Profile updated successfully',
-            'data' => $seeker->load(['user', 'projects'])
+            'data' => $seeker->load(['user', 'projects', 'skillsList'])
         ]);
     }
 
@@ -93,7 +105,7 @@ class SeekerController extends Controller
             ], 403);
         }
 
-        $seeker = $request->user()->seeker->load(['user', 'projects', 'applications.post.company.user']);
+        $seeker = $request->user()->seeker->load(['user', 'projects', 'skillsList', 'applications.post.company.user']);
 
         return response()->json([
             'success' => true,

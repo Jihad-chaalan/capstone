@@ -23,7 +23,7 @@ const AdminApplicationsPage = () => {
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const res = await api.get("/applications");
+        const res = await api.get("/admin/applications");
         const appsData = Array.isArray(res.data.data)
           ? res.data.data
           : res.data.data?.data || [];

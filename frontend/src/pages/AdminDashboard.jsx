@@ -14,6 +14,7 @@ const AdminDashboard = () => {
     universities: 0,
     totalApplications: 0,
     totalPosts: 0,
+    skills: 0,
   });
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
@@ -29,10 +30,11 @@ const AdminDashboard = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [usersRes, appsRes, postsRes] = await Promise.all([
-          api.get("/users"),
-          api.get("/applications"),
+        const [usersRes, appsRes, postsRes, skillsRes] = await Promise.all([
+          api.get("/admin/users"),
+          api.get("/admin/applications"),
           api.get("/posts"),
+          api.get("/admin/skills"),
         ]);
 
         // Handle paginated users response
@@ -45,11 +47,15 @@ const AdminDashboard = () => {
         const postsData = Array.isArray(postsRes.data.data)
           ? postsRes.data.data
           : postsRes.data.data?.data || [];
-
+        // Handle skills response
+        const skillsData = Array.isArray(skillsRes.data.data)
+          ? skillsRes.data.data
+          : skillsRes.data.data?.data || [];
         // Calculate stats
         const usersArray = Array.isArray(usersData) ? usersData : [];
         const appsArray = Array.isArray(appsData) ? appsData : [];
         const postsArray = Array.isArray(postsData) ? postsData : [];
+        const skillsArray = Array.isArray(skillsData) ? skillsData : [];
 
         setStats({
           totalUsers: usersArray.length,
@@ -59,6 +65,7 @@ const AdminDashboard = () => {
             .length,
           totalApplications: appsArray.length,
           totalPosts: postsArray.length,
+          skills: skillsArray.length,
         });
 
         setLoading(false);
@@ -180,29 +187,6 @@ const AdminDashboard = () => {
           </div>
 
           <div className="admin-stat-card">
-            <div className="admin-stat-icon admin-stat-icon-purple">
-              <svg
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                />
-              </svg>
-            </div>
-            <div className="admin-stat-content">
-              <p className="admin-stat-label">Companies</p>
-              <p className="admin-stat-value">{stats.companies}</p>
-            </div>
-          </div>
-
-          <div className="admin-stat-card">
             <div className="admin-stat-icon admin-stat-icon-orange">
               <svg
                 fill="none"
@@ -295,7 +279,7 @@ const AdminDashboard = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                 />
               </svg>
             </div>
@@ -303,6 +287,38 @@ const AdminDashboard = () => {
               <p className="admin-stat-label">Companies</p>
               <p className="admin-stat-value">{stats.companies || 0}</p>
             </div>
+          </div>
+
+          <div
+            className="admin-stat-card"
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate("/admin/skills")}
+          >
+            <div className="admin-stat-icon admin-stat-icon-orange">
+              <svg
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                />
+              </svg>
+            </div>
+            <div className="admin-stat-content">
+              <p className="admin-stat-label">Manage Skills</p>
+              <p className="admin-stat-value">{stats.skills || 0}</p>
+            </div>
+            {/* <div className="admin-stat-details">
+              <h3>Skills</h3>
+              <p className="admin-stat-number">{stats.skills || 0}</p>
+              <p className="admin-stat-label">Manage Skills</p>
+            </div> */}
           </div>
         </div>
 

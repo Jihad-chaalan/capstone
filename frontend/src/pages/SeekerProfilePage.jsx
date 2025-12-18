@@ -5,23 +5,37 @@ import api from "../api/client";
 import { useAuthStore } from "../store/authStore";
 
 const SeekerProfilePage = () => {
-  const [form, setForm] = useState({ skills: "", description: "" });
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
+  // Refs
+  const menuRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // Profile state
   const [seekerData, setSeekerData] = useState({
     name: "",
-    skills: "",
     description: "",
     photo: "",
     projects: [],
+    skills_list: [],
   });
+  const [form, setForm] = useState({ description: "" });
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const fileInputRef = useRef(null);
 
-  // Project management state
+  // Skills state
+  const [availableSkills, setAvailableSkills] = useState([]);
+  const [selectedSkills, setSelectedSkills] = useState([]);
+
+  // Menu state
+  const [showMenu, setShowMenu] = useState(false);
+
+  // Projects state
   const [projects, setProjects] = useState([]);
   const [projectForm, setProjectForm] = useState({
     title: "",
@@ -33,20 +47,103 @@ const SeekerProfilePage = () => {
   const [projectError, setProjectError] = useState(null);
   const [projectSuccess, setProjectSuccess] = useState(false);
 
-  // Auth and navigation
-  const { logout } = useAuthStore();
-  const navigate = useNavigate();
-  const [showMenu, setShowMenu] = useState(false);
-  const menuRef = useRef(null);
+  // Load available skills
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const res = await api.get("/skills");
+        setAvailableSkills(res.data.data || []);
+      } catch (error) {
+        console.error("Error fetching skills:", error);
+      }
+    };
+    fetchSkills();
+  }, []);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
+  // Load seeker profile
+  const loadProfile = async () => {
+    try {
+      const res = await api.get("/seeker/me");
+      const seeker = res.data.data;
+
+      const photoUrl = seeker.photo
+        ? seeker.photo.startsWith("http")
+          ? seeker.photo
+          : `${import.meta.env.VITE_API_URL}/storage/${seeker.photo}`
+        : "";
+
+      setForm({
+        description: seeker.description || "",
+      });
+
+      setSeekerData({
+        name: seeker.user?.name || "User",
+        description: seeker.description || "No description available",
+        photo: photoUrl,
+        projects: seeker.projects || [],
+        skills_list: seeker.skills_list || [],
+      });
+
+      setProjects(seeker.projects || []);
+      setPhotoPreview(photoUrl);
+
+      // Set selected skills
+      const seekerSkillIds = seeker.skills_list?.map((s) => s.id) || [];
+      setSelectedSkills(seekerSkillIds);
+
+      setLoading(false);
+    } catch (err) {
+      console.error("Error loading profile:", err);
+      setError("Failed to load profile.");
+      setLoading(false);
+    }
   };
 
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
-  };
+  // useEffect(() => {
+  //   loadProfile();
+  // }, []);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get("/seeker/me");
+        const seeker = res.data.data;
+
+        const photoUrl = seeker.photo
+          ? seeker.photo.startsWith("http")
+            ? seeker.photo
+            : `${import.meta.env.VITE_API_URL}/storage/${seeker.photo}`
+          : "";
+
+        setForm({
+          description: seeker.description || "",
+        });
+
+        setSeekerData({
+          name: seeker.user?.name || "User",
+          description: seeker.description || "No description available",
+          photo: photoUrl,
+          projects: seeker.projects || [],
+          skills_list: seeker.skills_list || [],
+        });
+
+        setProjects(seeker.projects || []);
+        setPhotoPreview(photoUrl);
+
+        // Set selected skills
+        const seekerSkillIds = seeker.skills_list?.map((s) => s.id) || [];
+        setSelectedSkills(seekerSkillIds);
+
+        setLoading(false);
+      } catch (err) {
+        console.error("Error loading profile:", err);
+        setError("Failed to load profile.");
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -65,46 +162,17 @@ const SeekerProfilePage = () => {
     };
   }, [showMenu]);
 
-  const loadProfile = () => {
-    api
-      .get("/seeker/me")
-      .then((res) => {
-        const seeker = res.data.data;
-        setForm({
-          skills: seeker.skills || "",
-          description: seeker.description || "",
-        });
-        setSeekerData({
-          name: seeker.user?.name || "User",
-          skills: seeker.skills || "No skills listed",
-          description: seeker.description || "No description available",
-          photo: seeker.photo
-            ? seeker.photo.startsWith("http")
-              ? seeker.photo
-              : `${import.meta.env.VITE_API_URL}/storage/${seeker.photo}`
-            : "",
-          projects: seeker.projects || [],
-        });
-        setProjects(seeker.projects || []);
-        setPhotoPreview(
-          seeker.photo
-            ? seeker.photo.startsWith("http")
-              ? seeker.photo
-              : `${import.meta.env.VITE_API_URL}/storage/${seeker.photo}`
-            : ""
-        );
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to load profile.");
-        setLoading(false);
-      });
+  // Auth handlers
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
   };
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
+  const toggleMenu = () => {
+    setShowMenu(!showMenu);
+  };
 
+  // Profile form handlers
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setSuccess(false);
@@ -121,86 +189,78 @@ const SeekerProfilePage = () => {
     setError(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSkillToggle = (skillId) => {
+    if (selectedSkills.includes(skillId)) {
+      setSelectedSkills(selectedSkills.filter((id) => id !== skillId));
+    } else {
+      setSelectedSkills([...selectedSkills, skillId]);
+    }
+    setSuccess(false);
+    setError(null);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     setError(null);
     setSuccess(false);
 
     const formData = new FormData();
-    formData.append("skills", form.skills ?? "");
-    formData.append("description", form.description ?? "");
+    formData.append("description", form.description || "");
     if (photoFile) {
       formData.append("photo", photoFile);
     }
 
-    api
-      .post("/seeker/update?_method=PUT", formData, {
+    // Add selected skill IDs
+    selectedSkills.forEach((skillId) => {
+      formData.append("skill_ids[]", skillId);
+    });
+
+    try {
+      await api.post("/seeker/update?_method=PUT", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((res) => {
-        setSuccess(true);
-        setSaving(false);
-        const seeker = res.data.data;
-        setForm({
-          skills: seeker.skills || "",
-          description: seeker.description || "",
-        });
-        setSeekerData({
-          name: seeker.user?.name || "User",
-          skills: seeker.skills || "No skills listed",
-          description: seeker.description || "No description available",
-          photo: seeker.photo
-            ? seeker.photo.startsWith("http")
-              ? seeker.photo
-              : `${import.meta.env.VITE_API_URL}/storage/${seeker.photo}`
-            : "",
-          projects: seeker.projects || [],
-        });
-        setProjects(seeker.projects || []);
-        setPhotoPreview(
-          seeker.photo
-            ? seeker.photo.startsWith("http")
-              ? seeker.photo
-              : `${import.meta.env.VITE_API_URL}/storage/${seeker.photo}`
-            : ""
-        );
-      })
-      .catch(() => {
-        setError("Failed to update profile.");
-        setSaving(false);
       });
+
+      setSuccess(true);
+      setSaving(false);
+      await loadProfile();
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      setError("Failed to update profile.");
+      setSaving(false);
+    }
   };
 
-  // Project management handlers
+  // Project form handlers
   const handleProjectInputChange = (e) => {
     setProjectForm({ ...projectForm, [e.target.name]: e.target.value });
     setProjectSuccess(false);
     setProjectError(null);
   };
 
-  const handleProjectSubmit = (e) => {
+  const handleProjectSubmit = async (e) => {
     e.preventDefault();
     setProjectSaving(true);
     setProjectError(null);
     setProjectSuccess(false);
 
-    const request = editingProjectId
-      ? api.put(`/projects/${editingProjectId}`, projectForm)
-      : api.post("/projects", projectForm);
+    try {
+      if (editingProjectId) {
+        await api.put(`/projects/${editingProjectId}`, projectForm);
+      } else {
+        await api.post("/projects", projectForm);
+      }
 
-    request
-      .then(() => {
-        setProjectSuccess(true);
-        setProjectSaving(false);
-        setProjectForm({ title: "", description: "", link: "" });
-        setEditingProjectId(null);
-        loadProfile();
-      })
-      .catch(() => {
-        setProjectError("Failed to save project.");
-        setProjectSaving(false);
-      });
+      setProjectSuccess(true);
+      setProjectSaving(false);
+      setProjectForm({ title: "", description: "", link: "" });
+      setEditingProjectId(null);
+      await loadProfile();
+    } catch (err) {
+      console.error("Error saving project:", err);
+      setProjectError("Failed to save project.");
+      setProjectSaving(false);
+    }
   };
 
   const handleEditProject = (project) => {
@@ -221,25 +281,25 @@ const SeekerProfilePage = () => {
     setProjectSuccess(false);
   };
 
-  const handleDeleteProject = (projectId) => {
+  const handleDeleteProject = async (projectId) => {
     if (!window.confirm("Are you sure you want to delete this project?")) {
       return;
     }
 
-    api
-      .delete(`/projects/${projectId}`)
-      .then(() => {
-        loadProfile();
-      })
-      .catch(() => {
-        setProjectError("Failed to delete project.");
-      });
+    try {
+      await api.delete(`/projects/${projectId}`);
+      await loadProfile();
+    } catch (err) {
+      console.error("Error deleting project:", err);
+      setProjectError("Failed to delete project.");
+    }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="seeker-profile-loading">Loading your profile...</div>
     );
+  }
 
   return (
     <div className="seeker-profile-page">
@@ -303,7 +363,7 @@ const SeekerProfilePage = () => {
       </nav>
 
       <div className="seeker-profile-container">
-        {/* Public Profile View - How others see it */}
+        {/* Public Profile View */}
         <div className="seeker-profile-header">
           <div className="seeker-profile-banner"></div>
           <div className="seeker-profile-info-section">
@@ -338,7 +398,17 @@ const SeekerProfilePage = () => {
                       d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                     />
                   </svg>
-                  <span>{seekerData.skills}</span>
+                  <div className="skills-display">
+                    {seekerData.skills_list?.length > 0 ? (
+                      seekerData.skills_list.map((skill) => (
+                        <span key={skill.id} className="skill-badge-display">
+                          {skill.name}
+                        </span>
+                      ))
+                    ) : (
+                      <span>No skills listed</span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -382,7 +452,7 @@ const SeekerProfilePage = () => {
           </div>
         )}
 
-        {/* Edit Form Card */}
+        {/* Edit Profile Form */}
         <div className="seeker-profile-form-card">
           <h2 className="seeker-profile-form-title">Edit Profile</h2>
           <form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -410,18 +480,31 @@ const SeekerProfilePage = () => {
             </div>
 
             <div className="seeker-profile-form-group">
-              <label htmlFor="skills" className="seeker-profile-label">
-                Skills
+              <label className="seeker-profile-label">
+                Select Your Skills *
               </label>
-              <input
-                id="skills"
-                type="text"
-                name="skills"
-                value={form.skills}
-                onChange={handleInputChange}
-                placeholder="e.g. JavaScript, PHP, React"
-                className="seeker-profile-input"
-              />
+              <div className="skills-selection">
+                {availableSkills.length === 0 ? (
+                  <p className="help-text">
+                    No skills available. Please contact admin.
+                  </p>
+                ) : (
+                  availableSkills.map((skill) => (
+                    <label key={skill.id} className="skill-checkbox">
+                      <input
+                        type="checkbox"
+                        value={skill.id}
+                        checked={selectedSkills.includes(skill.id)}
+                        onChange={() => handleSkillToggle(skill.id)}
+                      />
+                      <span className="skill-badge">{skill.name}</span>
+                    </label>
+                  ))
+                )}
+              </div>
+              {selectedSkills.length === 0 && availableSkills.length > 0 && (
+                <p className="help-text">Please select at least one skill</p>
+              )}
             </div>
 
             <div className="seeker-profile-form-group">
@@ -442,7 +525,10 @@ const SeekerProfilePage = () => {
             <button
               type="submit"
               className="seeker-profile-button"
-              disabled={saving}
+              disabled={
+                saving ||
+                (availableSkills.length > 0 && selectedSkills.length === 0)
+              }
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>
@@ -464,7 +550,7 @@ const SeekerProfilePage = () => {
           <form onSubmit={handleProjectSubmit}>
             <div className="seeker-profile-form-group">
               <label htmlFor="project-title" className="seeker-profile-label">
-                Project Title
+                Project Title *
               </label>
               <input
                 id="project-title"

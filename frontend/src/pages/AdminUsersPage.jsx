@@ -24,7 +24,7 @@ const AdminUsersPage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await api.get("/users");
+        const res = await api.get("/admin/users");
         const usersData = Array.isArray(res.data.data)
           ? res.data.data
           : res.data.data?.data || [];
