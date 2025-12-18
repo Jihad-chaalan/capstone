@@ -1,0 +1,282 @@
+.company-public-profile-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+}
+
+.company-public-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.company-public-header {
+  margin-bottom: 2rem;
+}
+
+.btn-back-arrow {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back-arrow:hover {
+  background: #5568d3;
+  transform: translateX(-2px);
+}
+
+.company-public-info {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.company-public-logo {
+  flex-shrink: 0;
+}
+
+.company-public-logo img {
+  width: 150px;
+  height: 150px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 3px solid #667eea;
+}
+
+.company-public-logo-placeholder {
+  width: 150px;
+  height: 150px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  color: white;
+  font-weight: bold;
+  border: 3px solid #667eea;
+}
+
+.company-public-details {
+  flex: 1;
+}
+
+.company-public-details h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2d3748;
+}
+
+.badge-verified {
+  display: inline-block;
+  background: #48bb78;
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.company-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: #4a5568;
+}
+
+.company-info-item .icon {
+  font-size: 1.3rem;
+}
+
+.company-info-item a {
+  color: #667eea;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.company-info-item a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.company-description {
+  margin-top: 2rem;
+}
+
+.company-description h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #2d3748;
+}
+
+.company-description p {
+  line-height: 1.8;
+  color: #4a5568;
+  white-space: pre-wrap;
+}
+
+.company-posts-section {
+  margin-top: 2rem;
+}
+
+.company-posts-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #2d3748;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.post-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.post-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+}
+
+.post-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f7fafc;
+}
+
+.post-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-content {
+  padding: 1.5rem;
+}
+
+.post-content h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.75rem;
+  color: #2d3748;
+}
+
+.post-technology {
+  margin-bottom: 1rem;
+}
+
+.tech-badge {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.post-description {
+  color: #718096;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-view-post {
+  flex: 1;
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-view-post:hover {
+  background: #5568d3;
+}
+
+.no-posts {
+  text-align: center;
+  color: #a0aec0;
+  font-size: 1.1rem;
+  padding: 3rem;
+  background: #f7fafc;
+  border-radius: 8px;
+}
+
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.error-state .btn-back {
+  margin-top: 1rem;
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.error-state .btn-back:hover {
+  background: #f7fafc;
+}
+
+@media (max-width: 768px) {
+  .company-public-profile-page {
+    padding: 1rem;
+  }
+
+  .company-public-info {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .company-public-details h1 {
+    font-size: 2rem;
+  }
+
+  .posts-grid {
+    grid-template-columns: 1fr;
+  }
+}

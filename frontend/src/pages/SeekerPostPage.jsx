@@ -5,54 +5,61 @@ import api from "../api/client";
 import { useAuthStore } from "../store/authStore";
 
 const SeekerPostsPage = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
+  // State management
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [applyingPostId, setApplyingPostId] = useState(null);
+  const [appliedPosts, setAppliedPosts] = useState(new Set());
   const [filters, setFilters] = useState({
     technology: "",
     position: "",
   });
-  const [applyingPostId, setApplyingPostId] = useState(null);
-  const [appliedPosts, setAppliedPosts] = useState(new Set());
-  const { logout } = useAuthStore(); // Removed unused 'user'
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // Load posts
-    const fetchPosts = async () => {
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (filters.technology) params.append("technology", filters.technology);
-      if (filters.position) params.append("position", filters.position);
-
-      try {
-        const res = await api.get(`/posts?${params.toString()}`);
-        setPosts(res.data.data.data || res.data.data);
-      } catch (err) {
-        setError("Failed to load posts.");
-        console.error("Error fetching posts:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // Load applications
-    const fetchApplications = async () => {
-      try {
-        const res = await api.get("/seeker/applications");
-        const applications = res.data.data.data || res.data.data;
-        const postIds = new Set(
-          applications.map((app) => app.internship_post_id)
-        );
-        setAppliedPosts(postIds);
-      } catch (err) {
-        console.error("Failed to load applications:", err);
-      }
-    };
-
     fetchPosts();
     fetchApplications();
-  }, [filters.technology, filters.position]);
+  }, []);
+
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const params = new URLSearchParams();
+      if (filters.technology.trim()) {
+        params.append("technology", filters.technology.trim());
+      }
+      if (filters.position.trim()) {
+        params.append("position", filters.position.trim());
+      }
+
+      const response = await api.get(`/posts?${params.toString()}`);
+      const postsData = response.data.data.data || response.data.data || [];
+      setPosts(postsData);
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+      setError("Failed to load internship posts. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchApplications = async () => {
+    try {
+      const response = await api.get("/seeker/applications");
+      const applications = response.data.data.data || response.data.data || [];
+      const postIds = new Set(
+        applications.map((app) => app.internship_post_id)
+      );
+      setAppliedPosts(postIds);
+    } catch (err) {
+      console.error("Failed to load applications:", err);
+    }
+  };
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -60,25 +67,32 @@ const SeekerPostsPage = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Triggers useEffect by updating filters
-    setFilters({ ...filters });
+    fetchPosts();
   };
 
-  const handleApply = (postId) => {
-    setApplyingPostId(postId);
-    api
-      .post("/applications", { post_id: postId })
-      .then(() => {
-        setAppliedPosts(new Set([...appliedPosts, postId]));
-        setApplyingPostId(null);
-        alert("Application submitted successfully!");
-      })
-      .catch((err) => {
-        setApplyingPostId(null);
-        const message =
-          err.response?.data?.message || "Failed to submit application.";
-        alert(message);
-      });
+  const handleApply = async (postId) => {
+    if (applyingPostId) return;
+
+    try {
+      setApplyingPostId(postId);
+      await api.post("/applications", { post_id: postId });
+
+      setAppliedPosts(new Set([...appliedPosts, postId]));
+      alert("Application submitted successfully! 🎉");
+    } catch (err) {
+      console.error("Application error:", err);
+      const message =
+        err.response?.data?.message || "Failed to submit application.";
+      alert(message);
+    } finally {
+      setApplyingPostId(null);
+    }
+  };
+
+  const handleViewCompany = (companyId) => {
+    if (companyId) {
+      navigate(`/seeker/companies/${companyId}`);
+    }
   };
 
   const handleLogout = async () => {
@@ -86,10 +100,11 @@ const SeekerPostsPage = () => {
     navigate("/login");
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="seeker-posts-loading">Loading internship posts...</div>
     );
+  }
 
   return (
     <div className="seeker-posts-page">
@@ -126,12 +141,10 @@ const SeekerPostsPage = () => {
       <div className="seeker-posts-container">
         {/* Header */}
         <div className="seeker-posts-header">
-          <div>
-            <h1 className="seeker-posts-title">Browse Internships</h1>
-            <p className="seeker-posts-subtitle">
-              Find your next opportunity from top companies
-            </p>
-          </div>
+          <h1 className="seeker-posts-title">Browse Internships</h1>
+          <p className="seeker-posts-subtitle">
+            Find your next opportunity from top companies
+          </p>
         </div>
 
         {/* Search/Filter Bar */}
@@ -171,10 +184,11 @@ const SeekerPostsPage = () => {
           </form>
         </div>
 
-        {/* Posts Grid */}
-        {error ? (
-          <div className="seeker-posts-error">{error}</div>
-        ) : posts.length === 0 ? (
+        {/* Error State */}
+        {error && <div className="seeker-posts-error">{error}</div>}
+
+        {/* Empty State */}
+        {!error && posts.length === 0 && (
           <div className="seeker-posts-empty">
             <svg
               className="seeker-posts-empty-icon"
@@ -194,7 +208,10 @@ const SeekerPostsPage = () => {
               Try adjusting your search filters
             </p>
           </div>
-        ) : (
+        )}
+
+        {/* Posts Grid */}
+        {!error && posts.length > 0 && (
           <div className="seeker-posts-grid">
             {posts.map((post) => {
               const hasApplied = appliedPosts.has(post.id);
@@ -207,16 +224,20 @@ const SeekerPostsPage = () => {
                       src={
                         post.photo.startsWith("http")
                           ? post.photo
-                          : `${import.meta.env.VITE_API_URL}/storage/${
-                              post.photo
-                            }`
+                          : `http://localhost:8000/storage/${post.photo}`
                       }
                       alt={post.position}
                       className="seeker-post-photo"
                     />
                   )}
                   <div className="seeker-post-content">
-                    <div className="seeker-post-company">
+                    <div
+                      className="seeker-post-company"
+                      onClick={() => handleViewCompany(post.company?.id)}
+                      style={{
+                        cursor: post.company?.id ? "pointer" : "default",
+                      }}
+                    >
                       {post.company?.user?.name || "Company"}
                     </div>
                     <h3 className="seeker-post-position">{post.position}</h3>
