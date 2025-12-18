@@ -27,11 +27,36 @@ const getSchema = (role) =>
     phone_number: yup.string().nullable(),
     ...(role === "company" && {
       address: yup.string().trim().required("Company address is required"),
+      certificate: yup
+        .mixed()
+        .test("required", "Certificate is required", (value) => {
+          return value && value.length > 0;
+        })
+        .test("fileSize", "File size must be less than 5MB", (value) => {
+          return value && value[0] && value[0].size <= 5242880;
+        })
+        .test(
+          "fileType",
+          "Only PDF, JPG, JPEG, and PNG files are allowed",
+          (value) => {
+            return (
+              value &&
+              value[0] &&
+              [
+                "application/pdf",
+                "image/jpeg",
+                "image/jpg",
+                "image/png",
+              ].includes(value[0].type)
+            );
+          }
+        ),
     }),
   });
 
 export default function Register() {
   const [role, setRole] = useState("");
+  const [certificateFile, setCertificateFile] = useState(null);
   const {
     register: signup,
     isLoading,
@@ -49,8 +74,25 @@ export default function Register() {
   });
 
   const onSubmit = async (data) => {
-    const result = await signup(data);
-    if (result.success) navigate("/dashboard");
+    // Create FormData for file upload
+    const formData = new FormData();
+    Object.keys(data).forEach((key) => {
+      if (key === "certificate" && data[key]?.length > 0) {
+        formData.append(key, data[key][0]);
+      } else if (key !== "certificate") {
+        formData.append(key, data[key] || "");
+      }
+    });
+
+    const result = await signup(formData);
+    if (result.success) {
+      if (data.role === "company") {
+        alert(
+          "Registration successful! Your account is pending admin verification."
+        );
+      }
+      navigate("/dashboard");
+    }
   };
 
   const showError = (field) => {
@@ -61,6 +103,13 @@ export default function Register() {
       return <p className="form-error">{errors[field].message}</p>;
     }
     return null;
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCertificateFile(file);
+    }
   };
 
   return (
@@ -75,7 +124,11 @@ export default function Register() {
 
         {error && <div className="alert alert-error mb-6">{error}</div>}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-5"
+          encType="multipart/form-data"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="form-group">
               <label className="form-label">Full Name *</label>
@@ -151,14 +204,41 @@ export default function Register() {
           </div>
 
           {role === "company" && (
-            <div className="form-group pt-4 border-t border-slate-200">
-              <label className="form-label">Company Address *</label>
-              <input
-                {...register("address")}
-                className="form-input"
-                placeholder="123 Business Street, City, Country"
-              />
-              {showError("address")}
+            <div className="space-y-5 pt-4 border-t border-slate-200">
+              <div className="form-group">
+                <label className="form-label">Company Address *</label>
+                <input
+                  {...register("address")}
+                  className="form-input"
+                  placeholder="123 Business Street, City, Country"
+                />
+                {showError("address")}
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Business Certificate *</label>
+                <p className="text-sm text-slate-500 mb-2">
+                  Upload your business registration certificate or proof of
+                  authenticity (PDF, JPG, PNG - Max 5MB)
+                </p>
+                <input
+                  {...register("certificate")}
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={handleFileChange}
+                  className="form-input"
+                />
+                {certificateFile && (
+                  <p className="text-sm text-green-600 mt-2">
+                    ✓ Selected: {certificateFile.name}
+                  </p>
+                )}
+                {showError("certificate")}
+                <p className="text-sm text-amber-600 mt-2">
+                  ⚠️ Your account will be pending admin verification until your
+                  certificate is reviewed.
+                </p>
+              </div>
             </div>
           )}
 

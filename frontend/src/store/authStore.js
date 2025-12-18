@@ -9,12 +9,22 @@ export const useAuthStore = create(
       token: null,
       isLoading: false,
       error: null,
-      validationErrors: null, // ADD THIS
+      validationErrors: null,
 
       register: async (userData) => {
         set({ isLoading: true, error: null, validationErrors: null });
         try {
-          const response = await api.post("/register", userData);
+          // Check if userData is FormData (for file uploads)
+          const isFormData = userData instanceof FormData;
+
+          const response = await api.post("/register", userData, {
+            headers: isFormData
+              ? {
+                  "Content-Type": "multipart/form-data",
+                }
+              : undefined,
+          });
+
           const { user, token } = response.data.data;
 
           set({ user, token, isLoading: false });
@@ -26,9 +36,11 @@ export const useAuthStore = create(
           const message =
             error.response?.data?.message || "Registration failed";
 
+          console.error("Registration error:", error.response?.data);
+
           set({
             error: message,
-            validationErrors, // Store field errors
+            validationErrors,
             isLoading: false,
           });
           return { success: false, validationErrors };
@@ -58,6 +70,18 @@ export const useAuthStore = create(
           await api.post("/logout");
         } finally {
           set({ user: null, token: null, validationErrors: null });
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("auth-storage");
+        }
+      },
+
+      fetchUser: async () => {
+        set({ isLoading: true });
+        try {
+          const response = await api.get("/me");
+          set({ user: response.data.data, isLoading: false });
+        } catch {
+          set({ user: null, token: null, isLoading: false });
           localStorage.removeItem("auth_token");
           localStorage.removeItem("auth-storage");
         }

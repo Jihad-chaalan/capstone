@@ -5,11 +5,15 @@ import api from "../api/client";
 import { useAuthStore } from "../store/authStore";
 
 const CompanyProfilePage = () => {
-  const [form, setForm] = useState({
-    address: "",
-    website_link: "",
-    description: "",
-  });
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
+  // Refs
+  const menuRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const postFileInputRef = useRef(null);
+
+  // Profile state
   const [companyData, setCompanyData] = useState({
     name: "",
     address: "",
@@ -17,6 +21,13 @@ const CompanyProfilePage = () => {
     description: "",
     logo: "",
     posts: [],
+    verification_status: "pending",
+    rejection_reason: null,
+  });
+  const [form, setForm] = useState({
+    address: "",
+    website_link: "",
+    description: "",
   });
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");
@@ -24,13 +35,11 @@ const CompanyProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const fileInputRef = useRef(null);
-  const { logout } = useAuthStore();
-  const navigate = useNavigate();
-  const [showMenu, setShowMenu] = useState(false);
-  const menuRef = useRef(null);
 
-  // Post management state
+  // Menu state
+  const [showMenu, setShowMenu] = useState(false);
+
+  // Posts state
   const [posts, setPosts] = useState([]);
   const [postForm, setPostForm] = useState({
     position: "",
@@ -43,7 +52,6 @@ const CompanyProfilePage = () => {
   const [postSaving, setPostSaving] = useState(false);
   const [postError, setPostError] = useState(null);
   const [postSuccess, setPostSuccess] = useState(false);
-  const postFileInputRef = useRef(null);
 
   // Applicants state
   const [selectedPost, setSelectedPost] = useState(null);
@@ -57,14 +65,63 @@ const CompanyProfilePage = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [responseText, setResponseText] = useState("");
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
+  // Load company profile
+  const loadProfile = async () => {
+    try {
+      const res = await api.get("/company/me");
+      const company = res.data.data;
+
+      const logoUrl = company.photo
+        ? company.photo.startsWith("http")
+          ? company.photo
+          : `${import.meta.env.VITE_API_URL}/storage/${company.photo}`
+        : "";
+
+      setForm({
+        address: company.address || "",
+        website_link: company.website_link || "",
+        description: company.description || "",
+      });
+
+      setCompanyData({
+        name: company.user?.name || "Company Name",
+        address: company.address || "Address not provided",
+        website: company.website_link || "Website not provided",
+        description: company.description || "No description available",
+        logo: logoUrl,
+        posts: company.posts || [],
+        verification_status: company.verification_status || "pending",
+        rejection_reason: company.rejection_reason || null,
+      });
+
+      setPosts(company.posts || []);
+      setPhotoPreview(logoUrl);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error loading profile:", err);
+      setError("Failed to load profile.");
+      setLoading(false);
+    }
   };
 
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
+  // Load university requests
+  const fetchIncomingRequests = async () => {
+    try {
+      const res = await api.get("/company/requests");
+      setIncomingRequests(res.data.data || []);
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+    }
   };
+
+  // Initial data load
+  useEffect(() => {
+    const loadData = async () => {
+      await loadProfile();
+      await fetchIncomingRequests();
+    };
+    loadData();
+  }, []);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -83,61 +140,17 @@ const CompanyProfilePage = () => {
     };
   }, [showMenu]);
 
-  const loadProfile = () => {
-    api
-      .get("/company/me")
-      .then((res) => {
-        const company = res.data.data;
-        setForm({
-          address: company.address || "",
-          website_link: company.website_link || "",
-          description: company.description || "",
-        });
-        setCompanyData({
-          name: company.user?.name || "Company Name",
-          address: company.address || "Address not provided",
-          website: company.website_link || "Website not provided",
-          description: company.description || "No description available",
-          logo: company.photo
-            ? company.photo.startsWith("http")
-              ? company.photo
-              : `${import.meta.env.VITE_API_URL}/storage/${company.photo}`
-            : "",
-          posts: company.posts || [],
-        });
-        setPosts(company.posts || []);
-        setPhotoPreview(
-          company.photo
-            ? company.photo.startsWith("http")
-              ? company.photo
-              : `${import.meta.env.VITE_API_URL}/storage/${company.photo}`
-            : ""
-        );
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to load profile.");
-        setLoading(false);
-      });
+  // Auth handlers
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
   };
 
-  const fetchIncomingRequests = async () => {
-    try {
-      const res = await api.get("/company/requests");
-      setIncomingRequests(res.data.data);
-    } catch (error) {
-      console.error("Error fetching requests:", error);
-    }
+  const toggleMenu = () => {
+    setShowMenu(!showMenu);
   };
 
-  useEffect(() => {
-    const loadData = async () => {
-      loadProfile();
-      await fetchIncomingRequests();
-    };
-    loadData();
-  }, []);
-
+  // Profile form handlers
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setSuccess(false);
@@ -154,60 +167,60 @@ const CompanyProfilePage = () => {
     setError(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     setError(null);
     setSuccess(false);
 
     const formData = new FormData();
-    formData.append("address", form.address ?? "");
-    formData.append("website_link", form.website_link ?? "");
-    formData.append("description", form.description ?? "");
+    formData.append("address", form.address || "");
+    formData.append("website_link", form.website_link || "");
+    formData.append("description", form.description || "");
     if (photoFile) {
       formData.append("photo", photoFile);
     }
 
-    api
-      .post("/company/update?_method=PUT", formData, {
+    try {
+      const res = await api.post("/company/update?_method=PUT", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((res) => {
-        setSuccess(true);
-        setSaving(false);
-        const company = res.data.data;
-        setForm({
-          address: company.address || "",
-          website_link: company.website_link || "",
-          description: company.description || "",
-        });
-        setCompanyData({
-          name: company.user?.name || "Company Name",
-          address: company.address || "Address not provided",
-          website: company.website_link || "Website not provided",
-          description: company.description || "No description available",
-          logo: company.photo
-            ? company.photo.startsWith("http")
-              ? company.photo
-              : `${import.meta.env.VITE_API_URL}/storage/${company.photo}`
-            : "",
-          posts: company.posts || [],
-        });
-        setPhotoPreview(
-          company.photo
-            ? company.photo.startsWith("http")
-              ? company.photo
-              : `${import.meta.env.VITE_API_URL}/storage/${company.photo}`
-            : ""
-        );
-      })
-      .catch(() => {
-        setError("Failed to update profile.");
-        setSaving(false);
       });
+
+      const company = res.data.data;
+      const logoUrl = company.photo
+        ? company.photo.startsWith("http")
+          ? company.photo
+          : `${import.meta.env.VITE_API_URL}/storage/${company.photo}`
+        : "";
+
+      setForm({
+        address: company.address || "",
+        website_link: company.website_link || "",
+        description: company.description || "",
+      });
+
+      setCompanyData({
+        name: company.user?.name || "Company Name",
+        address: company.address || "Address not provided",
+        website: company.website_link || "Website not provided",
+        description: company.description || "No description available",
+        logo: logoUrl,
+        posts: company.posts || [],
+        verification_status: company.verification_status || "pending",
+        rejection_reason: company.rejection_reason || null,
+      });
+
+      setPhotoPreview(logoUrl);
+      setSuccess(true);
+      setSaving(false);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      setError("Failed to update profile.");
+      setSaving(false);
+    }
   };
 
-  // Post management handlers
+  // Post form handlers
   const handlePostInputChange = (e) => {
     setPostForm({ ...postForm, [e.target.name]: e.target.value });
     setPostSuccess(false);
@@ -224,7 +237,7 @@ const CompanyProfilePage = () => {
     setPostError(null);
   };
 
-  const handlePostSubmit = (e) => {
+  const handlePostSubmit = async (e) => {
     e.preventDefault();
     setPostSaving(true);
     setPostError(null);
@@ -233,33 +246,34 @@ const CompanyProfilePage = () => {
     const formData = new FormData();
     formData.append("position", postForm.position);
     formData.append("technology", postForm.technology);
-    formData.append("description", postForm.description ?? "");
+    formData.append("description", postForm.description || "");
     if (postPhotoFile) {
       formData.append("photo", postPhotoFile);
     }
 
-    const request = editingPostId
-      ? api.post(`/posts/${editingPostId}?_method=PUT`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-      : api.post("/posts", formData, {
+    try {
+      if (editingPostId) {
+        await api.post(`/posts/${editingPostId}?_method=PUT`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
+      } else {
+        await api.post("/posts", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
 
-    request
-      .then(() => {
-        setPostSuccess(true);
-        setPostSaving(false);
-        setPostForm({ position: "", technology: "", description: "" });
-        setPostPhotoFile(null);
-        setPostPhotoPreview("");
-        setEditingPostId(null);
-        loadProfile();
-      })
-      .catch(() => {
-        setPostError("Failed to save post.");
-        setPostSaving(false);
-      });
+      setPostSuccess(true);
+      setPostSaving(false);
+      setPostForm({ position: "", technology: "", description: "" });
+      setPostPhotoFile(null);
+      setPostPhotoPreview("");
+      setEditingPostId(null);
+      await loadProfile();
+    } catch (err) {
+      console.error("Error saving post:", err);
+      setPostError("Failed to save post.");
+      setPostSaving(false);
+    }
   };
 
   const handleEditPost = (post) => {
@@ -289,37 +303,35 @@ const CompanyProfilePage = () => {
     setPostSuccess(false);
   };
 
-  const handleDeletePost = (postId) => {
+  const handleDeletePost = async (postId) => {
     if (!window.confirm("Are you sure you want to delete this post?")) {
       return;
     }
 
-    api
-      .delete(`/posts/${postId}`)
-      .then(() => {
-        loadProfile();
-      })
-      .catch(() => {
-        setPostError("Failed to delete post.");
-      });
+    try {
+      await api.delete(`/posts/${postId}`);
+      await loadProfile();
+    } catch (err) {
+      console.error("Error deleting post:", err);
+      setPostError("Failed to delete post.");
+    }
   };
 
   // Applicants handlers
-  const handleViewApplicants = (post) => {
+  const handleViewApplicants = async (post) => {
     setSelectedPost(post);
     setLoadingApplicants(true);
     setShowApplicantsModal(true);
 
-    api
-      .get(`/posts/${post.id}/applications`)
-      .then((res) => {
-        setApplicants(res.data.data);
-        setLoadingApplicants(false);
-      })
-      .catch(() => {
-        setLoadingApplicants(false);
-        alert("Failed to load applicants.");
-      });
+    try {
+      const res = await api.get(`/posts/${post.id}/applications`);
+      setApplicants(res.data.data || []);
+      setLoadingApplicants(false);
+    } catch (err) {
+      console.error("Error loading applicants:", err);
+      setLoadingApplicants(false);
+      alert("Failed to load applicants.");
+    }
   };
 
   const closeApplicantsModal = () => {
@@ -336,7 +348,7 @@ const CompanyProfilePage = () => {
       });
       setShowRequestModal(false);
       setResponseText("");
-      fetchIncomingRequests();
+      await fetchIncomingRequests();
       alert("Request accepted successfully!");
     } catch (error) {
       console.error("Error accepting request:", error);
@@ -351,7 +363,7 @@ const CompanyProfilePage = () => {
       });
       setShowRequestModal(false);
       setResponseText("");
-      fetchIncomingRequests();
+      await fetchIncomingRequests();
       alert("Request rejected");
     } catch (error) {
       console.error("Error rejecting request:", error);
@@ -368,10 +380,11 @@ const CompanyProfilePage = () => {
     return badges[status] || "status-pending";
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="company-profile-loading">Loading your profile...</div>
     );
+  }
 
   return (
     <div className="company-profile-page">
@@ -427,7 +440,60 @@ const CompanyProfilePage = () => {
       </nav>
 
       <div className="company-profile-container">
-        {/* Public Profile View */}
+        {/* Verification Status Alerts */}
+        {companyData.verification_status === "pending" && (
+          <div className="verification-alert pending">
+            <svg
+              className="verification-alert-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <div className="verification-alert-content">
+              <h4>Account Pending Verification</h4>
+              <p>
+                Your company account is currently under review by our admin
+                team. You can manage your profile, but some features may be
+                limited until verification is complete.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {companyData.verification_status === "rejected" &&
+          companyData.rejection_reason && (
+            <div className="verification-alert rejected">
+              <svg
+                className="verification-alert-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <div className="verification-alert-content">
+                <h4>Verification Rejected</h4>
+                <p>
+                  <strong>Reason:</strong> {companyData.rejection_reason}
+                </p>
+                <p>Please contact support to resolve this issue.</p>
+              </div>
+            </div>
+          )}
+
+        {/* Company Profile Header */}
         <div className="company-profile-header">
           <div className="company-profile-banner"></div>
           <div className="company-profile-info-section">
@@ -445,7 +511,42 @@ const CompanyProfilePage = () => {
               )}
             </div>
             <div className="company-profile-details">
-              <h1 className="company-profile-name">{companyData.name}</h1>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                }}
+              >
+                <h1 className="company-profile-name">{companyData.name}</h1>
+                {companyData.verification_status && (
+                  <span
+                    className={`verification-badge ${companyData.verification_status}`}
+                  >
+                    {companyData.verification_status === "verified" && (
+                      <svg
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    )}
+                    {companyData.verification_status === "pending" && "⏳"}
+                    {companyData.verification_status === "rejected" && "❌"}
+                    {companyData.verification_status === "verified"
+                      ? "Verified"
+                      : companyData.verification_status === "pending"
+                      ? "Pending Verification"
+                      : "Verification Rejected"}
+                  </span>
+                )}
+              </div>
               <p className="company-profile-type">Company</p>
               <div className="company-profile-meta">
                 <div className="company-profile-meta-item">
@@ -572,7 +673,7 @@ const CompanyProfilePage = () => {
           )}
         </div>
 
-        {/* Posts Section with Applicant Count */}
+        {/* Internship Posts Section */}
         {companyData.posts.length > 0 && (
           <div className="company-profile-posts-card">
             <h2 className="company-profile-posts-title">
@@ -633,237 +734,7 @@ const CompanyProfilePage = () => {
           </div>
         )}
 
-        {/* Applicants Modal */}
-        {showApplicantsModal && (
-          <div className="company-modal-overlay" onClick={closeApplicantsModal}>
-            <div
-              className="company-modal-content"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="company-modal-header">
-                <h2 className="company-modal-title">
-                  Applicants for {selectedPost?.position}
-                </h2>
-                <button
-                  onClick={closeApplicantsModal}
-                  className="company-modal-close"
-                >
-                  ×
-                </button>
-              </div>
-              <div className="company-modal-body">
-                {loadingApplicants ? (
-                  <div className="company-modal-loading">
-                    Loading applicants...
-                  </div>
-                ) : applicants.length === 0 ? (
-                  <div className="company-modal-empty">
-                    No applicants yet for this position.
-                  </div>
-                ) : (
-                  <div className="company-applicants-list">
-                    {applicants.map((application) => (
-                      <div
-                        key={application.id}
-                        className="company-applicant-card"
-                      >
-                        <div className="company-applicant-header">
-                          {application.seeker?.photo ? (
-                            <img
-                              src={
-                                application.seeker.photo.startsWith("http")
-                                  ? application.seeker.photo
-                                  : `${import.meta.env.VITE_API_URL}/storage/${
-                                      application.seeker.photo
-                                    }`
-                              }
-                              alt={application.seeker.user?.name}
-                              className="company-applicant-photo"
-                            />
-                          ) : (
-                            <div className="company-applicant-photo-placeholder">
-                              {application.seeker.user?.name
-                                ?.charAt(0)
-                                .toUpperCase() || "?"}
-                            </div>
-                          )}
-                          <div className="company-applicant-info">
-                            <h3 className="company-applicant-name">
-                              {application.seeker.user?.name || "Unknown"}
-                            </h3>
-                            <div className="company-applicant-contact">
-                              <div className="company-applicant-contact-item">
-                                <svg
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                  width="16"
-                                  height="16"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                  />
-                                </svg>
-                                <a
-                                  href={`mailto:${application.seeker.user?.email}`}
-                                  className="company-applicant-email"
-                                >
-                                  {application.seeker.user?.email}
-                                </a>
-                              </div>
-                              {application.seeker.user?.phone && (
-                                <div className="company-applicant-contact-item">
-                                  <svg
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    width="16"
-                                    height="16"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                                    />
-                                  </svg>
-                                  <span>{application.seeker.user.phone}</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        {application.seeker.skills && (
-                          <div className="company-applicant-skills">
-                            <strong>Skills:</strong> {application.seeker.skills}
-                          </div>
-                        )}
-                        {application.seeker.description && (
-                          <div className="company-applicant-description">
-                            {application.seeker.description}
-                          </div>
-                        )}
-                        {application.seeker.projects &&
-                          application.seeker.projects.length > 0 && (
-                            <div className="company-applicant-projects">
-                              <strong>Projects:</strong>
-                              <ul>
-                                {application.seeker.projects.map((project) => (
-                                  <li key={project.id}>
-                                    <strong>{project.title}</strong>
-                                    {project.link && (
-                                      <a
-                                        href={project.link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="company-project-link"
-                                      >
-                                        View Project →
-                                      </a>
-                                    )}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        <div className="company-applicant-footer">
-                          Applied on{" "}
-                          {new Date(
-                            application.created_at
-                          ).toLocaleDateString()}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Request Response Modal */}
-        {showRequestModal && selectedRequest && (
-          <div
-            className="company-modal-overlay"
-            onClick={() => setShowRequestModal(false)}
-          >
-            <div
-              className="company-modal-content"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="company-modal-header">
-                <h2 className="company-modal-title">Respond to Request</h2>
-                <button
-                  onClick={() => setShowRequestModal(false)}
-                  className="company-modal-close"
-                >
-                  ×
-                </button>
-              </div>
-              <div className="company-modal-body">
-                <p>
-                  <strong>Position:</strong> {selectedRequest.position}
-                </p>
-                <p>
-                  <strong>University:</strong>{" "}
-                  {selectedRequest.university?.user?.name}
-                </p>
-                <p>
-                  <strong>Technology:</strong> {selectedRequest.technology}
-                </p>
-                <p>
-                  <strong>Students:</strong>{" "}
-                  {selectedRequest.number_of_students}
-                </p>
-                <p>
-                  <strong>Description:</strong> {selectedRequest.description}
-                </p>
-
-                <div className="company-profile-form-group">
-                  <label className="company-profile-label">
-                    Response Message (optional)
-                  </label>
-                  <textarea
-                    value={responseText}
-                    onChange={(e) => setResponseText(e.target.value)}
-                    placeholder="Add a message to the university..."
-                    rows={4}
-                    className="company-profile-textarea"
-                  />
-                </div>
-
-                <div className="modal-actions">
-                  <button
-                    onClick={() => handleAcceptRequest(selectedRequest.id)}
-                    className="btn-accept"
-                  >
-                    Accept Request
-                  </button>
-                  <button
-                    onClick={() => handleRejectRequest(selectedRequest.id)}
-                    className="btn-reject"
-                  >
-                    Reject Request
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowRequestModal(false);
-                      setResponseText("");
-                    }}
-                    className="btn-cancel"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Edit Profile Form Card */}
+        {/* Edit Profile Form */}
         <div className="company-profile-form-card">
           <h2 className="company-profile-form-title">Edit Company Profile</h2>
           <form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -952,7 +823,7 @@ const CompanyProfilePage = () => {
           </form>
         </div>
 
-        {/* Post Management Card */}
+        {/* Post Management Form */}
         <div className="company-profile-form-card">
           <h2 className="company-profile-form-title">
             {editingPostId ? "Edit Post" : "Add New Internship Post"}
@@ -1064,7 +935,7 @@ const CompanyProfilePage = () => {
             )}
           </form>
 
-          {/* Existing Posts List for Management */}
+          {/* Posts Management List */}
           {posts.length > 0 && (
             <div className="company-profile-posts-manage">
               <h3 className="company-profile-manage-title">Your Posts</h3>
@@ -1128,6 +999,233 @@ const CompanyProfilePage = () => {
           )}
         </div>
       </div>
+
+      {/* Applicants Modal */}
+      {showApplicantsModal && (
+        <div className="company-modal-overlay" onClick={closeApplicantsModal}>
+          <div
+            className="company-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="company-modal-header">
+              <h2 className="company-modal-title">
+                Applicants for {selectedPost?.position}
+              </h2>
+              <button
+                onClick={closeApplicantsModal}
+                className="company-modal-close"
+              >
+                ×
+              </button>
+            </div>
+            <div className="company-modal-body">
+              {loadingApplicants ? (
+                <div className="company-modal-loading">
+                  Loading applicants...
+                </div>
+              ) : applicants.length === 0 ? (
+                <div className="company-modal-empty">
+                  No applicants yet for this position.
+                </div>
+              ) : (
+                <div className="company-applicants-list">
+                  {applicants.map((application) => (
+                    <div
+                      key={application.id}
+                      className="company-applicant-card"
+                    >
+                      <div className="company-applicant-header">
+                        {application.seeker?.photo ? (
+                          <img
+                            src={
+                              application.seeker.photo.startsWith("http")
+                                ? application.seeker.photo
+                                : `${import.meta.env.VITE_API_URL}/storage/${
+                                    application.seeker.photo
+                                  }`
+                            }
+                            alt={application.seeker.user?.name}
+                            className="company-applicant-photo"
+                          />
+                        ) : (
+                          <div className="company-applicant-photo-placeholder">
+                            {application.seeker.user?.name
+                              ?.charAt(0)
+                              .toUpperCase() || "?"}
+                          </div>
+                        )}
+                        <div className="company-applicant-info">
+                          <h3 className="company-applicant-name">
+                            {application.seeker.user?.name || "Unknown"}
+                          </h3>
+                          <div className="company-applicant-contact">
+                            <div className="company-applicant-contact-item">
+                              <svg
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                width="16"
+                                height="16"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                />
+                              </svg>
+                              <a
+                                href={`mailto:${application.seeker.user?.email}`}
+                                className="company-applicant-email"
+                              >
+                                {application.seeker.user?.email}
+                              </a>
+                            </div>
+                            {application.seeker.user?.phone && (
+                              <div className="company-applicant-contact-item">
+                                <svg
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                  width="16"
+                                  height="16"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                                  />
+                                </svg>
+                                <span>{application.seeker.user.phone}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      {application.seeker.skills && (
+                        <div className="company-applicant-skills">
+                          <strong>Skills:</strong> {application.seeker.skills}
+                        </div>
+                      )}
+                      {application.seeker.description && (
+                        <div className="company-applicant-description">
+                          {application.seeker.description}
+                        </div>
+                      )}
+                      {application.seeker.projects &&
+                        application.seeker.projects.length > 0 && (
+                          <div className="company-applicant-projects">
+                            <strong>Projects:</strong>
+                            <ul>
+                              {application.seeker.projects.map((project) => (
+                                <li key={project.id}>
+                                  <strong>{project.title}</strong>
+                                  {project.link && (
+                                    <a
+                                      href={project.link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="company-project-link"
+                                    >
+                                      View Project →
+                                    </a>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      <div className="company-applicant-footer">
+                        Applied on{" "}
+                        {new Date(application.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Request Response Modal */}
+      {showRequestModal && selectedRequest && (
+        <div
+          className="company-modal-overlay"
+          onClick={() => setShowRequestModal(false)}
+        >
+          <div
+            className="company-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="company-modal-header">
+              <h2 className="company-modal-title">Respond to Request</h2>
+              <button
+                onClick={() => setShowRequestModal(false)}
+                className="company-modal-close"
+              >
+                ×
+              </button>
+            </div>
+            <div className="company-modal-body">
+              <p>
+                <strong>Position:</strong> {selectedRequest.position}
+              </p>
+              <p>
+                <strong>University:</strong>{" "}
+                {selectedRequest.university?.user?.name}
+              </p>
+              <p>
+                <strong>Technology:</strong> {selectedRequest.technology}
+              </p>
+              <p>
+                <strong>Students:</strong> {selectedRequest.number_of_students}
+              </p>
+              <p>
+                <strong>Description:</strong> {selectedRequest.description}
+              </p>
+
+              <div className="company-profile-form-group">
+                <label className="company-profile-label">
+                  Response Message (optional)
+                </label>
+                <textarea
+                  value={responseText}
+                  onChange={(e) => setResponseText(e.target.value)}
+                  placeholder="Add a message to the university..."
+                  rows={4}
+                  className="company-profile-textarea"
+                />
+              </div>
+
+              <div className="modal-actions">
+                <button
+                  onClick={() => handleAcceptRequest(selectedRequest.id)}
+                  className="btn-accept"
+                >
+                  Accept Request
+                </button>
+                <button
+                  onClick={() => handleRejectRequest(selectedRequest.id)}
+                  className="btn-reject"
+                >
+                  Reject Request
+                </button>
+                <button
+                  onClick={() => {
+                    setShowRequestModal(false);
+                    setResponseText("");
+                  }}
+                  className="btn-cancel"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

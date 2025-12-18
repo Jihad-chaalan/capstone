@@ -61,3 +61,134 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   border: 2px solid #0073b1;
 }
+/* Filter Tabs */
+.filter-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.filter-tabs button {
+  padding: 10px 20px;
+  border: none;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.filter-tabs button:hover {
+  background: #f3f6f8;
+}
+
+.filter-tabs button.active {
+  background: #0a66c2;
+  color: white;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-badge-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge-verified {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Certificate Button */
+.btn-view-cert {
+  padding: 6px 12px;
+  background: #0a66c2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.3s ease;
+}
+
+.btn-view-cert:hover {
+  background: #004182;
+}
+
+/* Reject Textarea */
+.reject-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  margin-top: 10px;
+}
+
+.reject-textarea:focus {
+  outline: none;
+  border-color: #0a66c2;
+}
+
+/* Success/Danger Buttons */
+.btn-success {
+  padding: 10px 20px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.btn-success:hover {
+  background: #059669;
+}
+
+.btn-danger {
+  padding: 10px 20px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.btn-secondary {
+  padding: 10px 20px;
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}

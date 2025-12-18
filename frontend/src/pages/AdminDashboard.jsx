@@ -278,6 +278,32 @@ const AdminDashboard = () => {
               <p className="admin-stat-value">{stats.totalApplications}</p>
             </div>
           </div>
+          <div
+            className="admin-stat-card"
+            onClick={() => navigate("/admin/companies")}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="admin-stat-icon admin-stat-icon-red">
+              <svg
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+            </div>
+            <div className="admin-stat-content">
+              <p className="admin-stat-label">Companies</p>
+              <p className="admin-stat-value">{stats.companies || 0}</p>
+            </div>
+          </div>
         </div>
 
         {/* Quick Links */}

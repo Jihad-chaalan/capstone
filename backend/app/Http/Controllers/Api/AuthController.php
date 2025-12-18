@@ -31,6 +31,7 @@ class AuthController extends Controller
             'address' => 'required_if:role,company|string|max:255',
             'website_link' => 'nullable|string|max:255',
             'company_description' => 'nullable|string',
+            'certificate' => 'required_if:role,company|file|mimes:pdf,jpg,jpeg,png|max:5120',
 
             // Seeker specific fields
             'skills' => 'nullable|string',
@@ -53,11 +54,21 @@ class AuthController extends Controller
                 break;
 
             case 'company':
+                $certificatePath = null;
+
+                // Handle certificate upload
+                if ($request->hasFile('certificate')) {
+                    $file = $request->file('certificate');
+                    $filename = time() . '_' . $user->id . '_' . $file->getClientOriginalName();
+                    $certificatePath = $file->storeAs('certificates', $filename, 'public');
+                }
                 Company::create([
                     'user_id' => $user->id,
                     'address' => $validated['address'],
                     'website_link' => $validated['website_link'] ?? null,
                     'description' => $validated['company_description'] ?? null,
+                    'certificate_path' => $certificatePath,
+                    'verification_status' => Company::STATUS_PENDING,
                 ]);
                 break;
 

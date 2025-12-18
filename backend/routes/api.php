@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\InternshipRequestController;
+use App\Http\Controllers\Api\AdminCompanyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,11 +55,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/change-password', [UserController::class, 'changePassword']);
 
     // Admin only routes
-    Route::middleware('admin')->group(function () {
+    Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/users', [UserController::class, 'index']);
         Route::get('/users/{id}', [UserController::class, 'show']);
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
         Route::get('/applications', [ApplicationController::class, 'index']);
+        // Companies verification
+        Route::get('/companies', [AdminCompanyController::class, 'index']);
+        Route::get('/companies/pending', [AdminCompanyController::class, 'pending']);
+        Route::post('/companies/{id}/verify', [AdminCompanyController::class, 'verify']);
+        Route::post('/companies/{id}/reject', [AdminCompanyController::class, 'reject']);
+        Route::get('/companies/{id}/certificate', [AdminCompanyController::class, 'getCertificate']);
     });
 
     // Company routes
