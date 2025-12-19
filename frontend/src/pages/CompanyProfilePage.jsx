@@ -4,16 +4,60 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/client";
 import { useAuthStore } from "../store/authStore";
 
+const RatingForm = ({ initialScore = 5, onSubmit, onCancel }) => {
+  const [score, setScore] = useState(initialScore);
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      await onSubmit({ score, comment });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit}>
+      <label style={{ display: "block", marginBottom: 6 }}>Score</label>
+      <select value={score} onChange={(e) => setScore(Number(e.target.value))}>
+        {[5, 4, 3, 2, 1].map((s) => (
+          <option key={s} value={s}>
+            {s} star{s > 1 ? "s" : ""}
+          </option>
+        ))}
+      </select>
+      <label style={{ display: "block", marginTop: 12, marginBottom: 6 }}>
+        Comment (optional)
+      </label>
+      <textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        rows={4}
+        style={{ width: "100%" }}
+      />
+      <div className="modal-actions" style={{ marginTop: 12 }}>
+        <button type="submit" className="btn-primary" disabled={submitting}>
+          {submitting ? "Saving..." : "Save Rating"}
+        </button>
+        <button type="button" onClick={onCancel} className="btn-secondary">
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+};
+
 const CompanyProfilePage = () => {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
-
-  // Refs
   const menuRef = useRef(null);
   const fileInputRef = useRef(null);
   const postFileInputRef = useRef(null);
 
-  // Profile state
   const [companyData, setCompanyData] = useState({
     name: "",
     address: "",
@@ -35,11 +79,8 @@ const CompanyProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-
-  // Menu state
   const [showMenu, setShowMenu] = useState(false);
 
-  // Posts state
   const [posts, setPosts] = useState([]);
   const [postForm, setPostForm] = useState({
     position: "",
@@ -53,24 +94,31 @@ const CompanyProfilePage = () => {
   const [postError, setPostError] = useState(null);
   const [postSuccess, setPostSuccess] = useState(false);
 
-  // Applicants state
+  const [applications, setApplications] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [applicants, setApplicants] = useState([]);
   const [loadingApplicants, setLoadingApplicants] = useState(false);
   const [showApplicantsModal, setShowApplicantsModal] = useState(false);
 
-  // University requests state
+  const [ratingModalOpen, setRatingModalOpen] = useState(false);
+  const [ratingApplicationId, setRatingApplicationId] = useState(null);
+
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [responseText, setResponseText] = useState("");
 
-  // Load company profile
-  const loadProfile = async () => {
+  const normalizeList = (payload) => {
+    if (!payload) return [];
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload.data)) return payload.data;
+    return [];
+  };
+
+  async function loadProfile() {
     try {
       const res = await api.get("/company/me");
       const company = res.data.data;
-
       const logoUrl = company.photo
         ? company.photo.startsWith("http")
           ? company.photo
@@ -82,7 +130,6 @@ const CompanyProfilePage = () => {
         website_link: company.website_link || "",
         description: company.description || "",
       });
-
       setCompanyData({
         name: company.user?.name || "Company Name",
         address: company.address || "Address not provided",
@@ -93,7 +140,6 @@ const CompanyProfilePage = () => {
         verification_status: company.verification_status || "pending",
         rejection_reason: company.rejection_reason || null,
       });
-
       setPosts(company.posts || []);
       setPhotoPreview(logoUrl);
       setLoading(false);
@@ -102,45 +148,50 @@ const CompanyProfilePage = () => {
       setError("Failed to load profile.");
       setLoading(false);
     }
-  };
+  }
 
-  // Load university requests
-  const fetchIncomingRequests = async () => {
+  async function fetchApplications() {
+    try {
+      const res = await api.get("/company/applications");
+      const list = normalizeList(res.data?.data);
+      setApplications(list);
+    } catch (err) {
+      console.error("Error fetching applications:", err);
+      setApplications([]);
+    }
+  }
+
+  async function fetchIncomingRequests() {
     try {
       const res = await api.get("/company/requests");
       setIncomingRequests(res.data.data || []);
     } catch (error) {
       console.error("Error fetching requests:", error);
     }
-  };
+  }
 
-  // Initial data load
   useEffect(() => {
-    const loadData = async () => {
-      await loadProfile();
-      await fetchIncomingRequests();
-    };
-    loadData();
+    Promise.resolve().then(() => {
+      loadProfile();
+      fetchApplications();
+      fetchIncomingRequests();
+    });
   }, []);
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setShowMenu(false);
       }
     };
-
     if (showMenu) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu]);
 
-  // Auth handlers
   const handleLogout = async () => {
     await logout();
     navigate("/login");
@@ -150,7 +201,6 @@ const CompanyProfilePage = () => {
     setShowMenu(!showMenu);
   };
 
-  // Profile form handlers
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setSuccess(false);
@@ -185,7 +235,6 @@ const CompanyProfilePage = () => {
       const res = await api.post("/company/update?_method=PUT", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
       const company = res.data.data;
       const logoUrl = company.photo
         ? company.photo.startsWith("http")
@@ -198,7 +247,6 @@ const CompanyProfilePage = () => {
         website_link: company.website_link || "",
         description: company.description || "",
       });
-
       setCompanyData({
         name: company.user?.name || "Company Name",
         address: company.address || "Address not provided",
@@ -209,7 +257,6 @@ const CompanyProfilePage = () => {
         verification_status: company.verification_status || "pending",
         rejection_reason: company.rejection_reason || null,
       });
-
       setPhotoPreview(logoUrl);
       setSuccess(true);
       setSaving(false);
@@ -220,7 +267,6 @@ const CompanyProfilePage = () => {
     }
   };
 
-  // Post form handlers
   const handlePostInputChange = (e) => {
     setPostForm({ ...postForm, [e.target.name]: e.target.value });
     setPostSuccess(false);
@@ -261,7 +307,6 @@ const CompanyProfilePage = () => {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
-
       setPostSuccess(true);
       setPostSaving(false);
       setPostForm({ position: "", technology: "", description: "" });
@@ -307,7 +352,6 @@ const CompanyProfilePage = () => {
     if (!window.confirm("Are you sure you want to delete this post?")) {
       return;
     }
-
     try {
       await api.delete(`/posts/${postId}`);
       await loadProfile();
@@ -317,7 +361,6 @@ const CompanyProfilePage = () => {
     }
   };
 
-  // Applicants handlers
   const handleViewApplicants = async (post) => {
     setSelectedPost(post);
     setLoadingApplicants(true);
@@ -325,7 +368,7 @@ const CompanyProfilePage = () => {
 
     try {
       const res = await api.get(`/posts/${post.id}/applications`);
-      setApplicants(res.data.data || []);
+      setApplicants(normalizeList(res.data.data));
       setLoadingApplicants(false);
     } catch (err) {
       console.error("Error loading applicants:", err);
@@ -340,7 +383,80 @@ const CompanyProfilePage = () => {
     setApplicants([]);
   };
 
-  // University request handlers
+  const acceptApplication = async (applicationId) => {
+    try {
+      await api.post(`/applications/${applicationId}/accept`);
+
+      const acceptedApp = applicants.find((app) => app.id === applicationId);
+
+      if (acceptedApp && acceptedApp.seeker) {
+        const seekerName =
+          acceptedApp.seeker.user?.name ||
+          acceptedApp.seeker.name ||
+          "the seeker";
+        const seekerEmail = acceptedApp.seeker.user?.email || "Not provided";
+        const seekerPhone = acceptedApp.seeker.user?.phone || "Not provided";
+
+        alert(
+          `✅ Acceptance successful!\n\n` +
+            `Please contact ${seekerName} to discuss the internship and next steps on:\n\n` +
+            `📧 Email: ${seekerEmail}\n` +
+            `📞 Phone: ${seekerPhone}`
+        );
+      }
+
+      await fetchApplications();
+      if (selectedPost) await handleViewApplicants(selectedPost);
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to accept");
+    }
+  };
+
+  const rejectApplication = async (applicationId) => {
+    if (!window.confirm("Reject this applicant?")) return;
+    try {
+      await api.post(`/applications/${applicationId}/reject`);
+      await fetchApplications();
+      if (selectedPost) await handleViewApplicants(selectedPost);
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to reject");
+    }
+  };
+
+  const completeApplication = async (applicationId) => {
+    if (!window.confirm("Mark this internship as finished?")) return;
+    try {
+      await api.post(`/applications/${applicationId}/complete`);
+      await fetchApplications();
+      if (selectedPost) await handleViewApplicants(selectedPost);
+
+      setRatingApplicationId(applicationId);
+      setRatingModalOpen(true);
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to mark finished");
+    }
+  };
+
+  const submitRating = async ({ score, comment }) => {
+    try {
+      await api.post(`/applications/${ratingApplicationId}/rating`, {
+        score,
+        comment,
+      });
+      setRatingModalOpen(false);
+      setRatingApplicationId(null);
+      await fetchApplications();
+      if (selectedPost) await handleViewApplicants(selectedPost);
+      alert("Rating saved successfully!");
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to save rating");
+    }
+  };
+
   const handleAcceptRequest = async (requestId) => {
     try {
       await api.post(`/internship-requests/${requestId}/accept`, {
@@ -380,6 +496,11 @@ const CompanyProfilePage = () => {
     return badges[status] || "status-pending";
   };
 
+  const safeApplications = Array.isArray(applications) ? applications : [];
+  const acceptedInterns = safeApplications.filter((a) =>
+    ["accepted", "in_progress"].includes(a.status)
+  );
+
   if (loading) {
     return (
       <div className="company-profile-loading">Loading your profile...</div>
@@ -388,7 +509,6 @@ const CompanyProfilePage = () => {
 
   return (
     <div className="company-profile-page">
-      {/* Navbar */}
       <nav className="company-profile-navbar">
         <div className="company-profile-navbar-container">
           <div className="company-profile-navbar-content">
@@ -399,16 +519,7 @@ const CompanyProfilePage = () => {
                 className="company-profile-menu-button"
                 aria-label="Menu"
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <circle cx="12" cy="5" r="2" />
-                  <circle cx="12" cy="12" r="2" />
-                  <circle cx="12" cy="19" r="2" />
-                </svg>
+                •••
               </button>
               {showMenu && (
                 <div className="company-profile-dropdown">
@@ -416,20 +527,6 @@ const CompanyProfilePage = () => {
                     onClick={handleLogout}
                     className="company-profile-dropdown-item"
                   >
-                    <svg
-                      width="18"
-                      height="18"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                      />
-                    </svg>
                     Sign Out
                   </button>
                 </div>
@@ -440,60 +537,26 @@ const CompanyProfilePage = () => {
       </nav>
 
       <div className="company-profile-container">
-        {/* Verification Status Alerts */}
         {companyData.verification_status === "pending" && (
           <div className="verification-alert pending">
-            <svg
-              className="verification-alert-icon"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
             <div className="verification-alert-content">
               <h4>Account Pending Verification</h4>
-              <p>
-                Your company account is currently under review by our admin
-                team. You can manage your profile, but some features may be
-                limited until verification is complete.
-              </p>
+              <p>Your company account is currently under review.</p>
             </div>
           </div>
         )}
-
         {companyData.verification_status === "rejected" &&
           companyData.rejection_reason && (
             <div className="verification-alert rejected">
-              <svg
-                className="verification-alert-icon"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
               <div className="verification-alert-content">
                 <h4>Verification Rejected</h4>
                 <p>
                   <strong>Reason:</strong> {companyData.rejection_reason}
                 </p>
-                <p>Please contact support to resolve this issue.</p>
               </div>
             </div>
           )}
 
-        {/* Company Profile Header */}
         <div className="company-profile-header">
           <div className="company-profile-banner"></div>
           <div className="company-profile-info-section">
@@ -523,68 +586,21 @@ const CompanyProfilePage = () => {
                   <span
                     className={`verification-badge ${companyData.verification_status}`}
                   >
-                    {companyData.verification_status === "verified" && (
-                      <svg
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    )}
-                    {companyData.verification_status === "pending" && "⏳"}
-                    {companyData.verification_status === "rejected" && "❌"}
+                    {companyData.verification_status === "verified" && "✓ "}
                     {companyData.verification_status === "verified"
                       ? "Verified"
                       : companyData.verification_status === "pending"
-                      ? "Pending Verification"
-                      : "Verification Rejected"}
+                      ? "⏳ Pending"
+                      : "❌ Rejected"}
                   </span>
                 )}
               </div>
               <p className="company-profile-type">Company</p>
               <div className="company-profile-meta">
                 <div className="company-profile-meta-item">
-                  <svg
-                    className="company-profile-icon"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                  <span>{companyData.address}</span>
+                  <span>📍 {companyData.address}</span>
                 </div>
                 <div className="company-profile-meta-item">
-                  <svg
-                    className="company-profile-icon"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-                    />
-                  </svg>
                   {companyData.website !== "Website not provided" ? (
                     <a
                       href={companyData.website}
@@ -592,10 +608,10 @@ const CompanyProfilePage = () => {
                       rel="noopener noreferrer"
                       className="company-profile-link"
                     >
-                      {companyData.website}
+                      🌐 {companyData.website}
                     </a>
                   ) : (
-                    <span>{companyData.website}</span>
+                    <span>🌐 {companyData.website}</span>
                   )}
                 </div>
               </div>
@@ -609,7 +625,65 @@ const CompanyProfilePage = () => {
           </div>
         </div>
 
-        {/* University Requests Section */}
+        <div className="company-accepted-section">
+          <h2 className="company-profile-section-title">
+            Active Interns ({acceptedInterns.length})
+          </h2>
+          {acceptedInterns.length === 0 ? (
+            <p className="company-requests-empty">No active interns now.</p>
+          ) : (
+            <div className="accepted-list">
+              {acceptedInterns.map((app) => (
+                <div key={app.id} className="accepted-item">
+                  <div className="accepted-info">
+                    <div className="accepted-photo">
+                      {app.seeker?.photo ? (
+                        <img
+                          src={
+                            app.seeker.photo.startsWith("http")
+                              ? app.seeker.photo
+                              : `${import.meta.env.VITE_API_URL}/storage/${
+                                  app.seeker.photo
+                                }`
+                          }
+                          alt={app.seeker.user?.name}
+                        />
+                      ) : (
+                        <div className="accepted-photo-placeholder">
+                          {app.seeker?.user?.name?.charAt(0).toUpperCase() ||
+                            "?"}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <div className="accepted-name">
+                        {app.seeker?.user?.name || "Unknown"}
+                      </div>
+                      <div className="accepted-meta">
+                        {app.status} • {app.post?.position}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="accepted-actions">
+                    <button
+                      onClick={() => rejectApplication(app.id)}
+                      className="btn-reject"
+                    >
+                      Reject
+                    </button>
+                    <button
+                      onClick={() => completeApplication(app.id)}
+                      className="btn-finish"
+                    >
+                      Finish Internship
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className="company-requests-section">
           <h2 className="company-profile-section-title">
             Internship Requests from Universities
@@ -673,7 +747,6 @@ const CompanyProfilePage = () => {
           )}
         </div>
 
-        {/* Internship Posts Section */}
         {companyData.posts.length > 0 && (
           <div className="company-profile-posts-card">
             <h2 className="company-profile-posts-title">
@@ -711,20 +784,6 @@ const CompanyProfilePage = () => {
                       onClick={() => handleViewApplicants(post)}
                       className="company-profile-view-applicants-btn"
                     >
-                      <svg
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        width="18"
-                        height="18"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                        />
-                      </svg>
                       View Applicants ({post.applications_count || 0})
                     </button>
                   </div>
@@ -734,7 +793,6 @@ const CompanyProfilePage = () => {
           </div>
         )}
 
-        {/* Edit Profile Form */}
         <div className="company-profile-form-card">
           <h2 className="company-profile-form-title">Edit Company Profile</h2>
           <form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -760,7 +818,6 @@ const CompanyProfilePage = () => {
                 )}
               </div>
             </div>
-
             <div className="company-profile-form-group">
               <label htmlFor="address" className="company-profile-label">
                 Address
@@ -775,7 +832,6 @@ const CompanyProfilePage = () => {
                 className="company-profile-input"
               />
             </div>
-
             <div className="company-profile-form-group">
               <label htmlFor="website_link" className="company-profile-label">
                 Website
@@ -790,7 +846,6 @@ const CompanyProfilePage = () => {
                 className="company-profile-input"
               />
             </div>
-
             <div className="company-profile-form-group">
               <label htmlFor="description" className="company-profile-label">
                 About us
@@ -805,7 +860,6 @@ const CompanyProfilePage = () => {
                 className="company-profile-textarea"
               />
             </div>
-
             <button
               type="submit"
               className="company-profile-button"
@@ -813,7 +867,6 @@ const CompanyProfilePage = () => {
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>
-
             {success && (
               <div className="company-profile-success">
                 Profile updated successfully!
@@ -823,7 +876,6 @@ const CompanyProfilePage = () => {
           </form>
         </div>
 
-        {/* Post Management Form */}
         <div className="company-profile-form-card">
           <h2 className="company-profile-form-title">
             {editingPostId ? "Edit Post" : "Add New Internship Post"}
@@ -844,7 +896,6 @@ const CompanyProfilePage = () => {
                 required
               />
             </div>
-
             <div className="company-profile-form-group">
               <label htmlFor="technology" className="company-profile-label">
                 Technology
@@ -860,7 +911,6 @@ const CompanyProfilePage = () => {
                 required
               />
             </div>
-
             <div className="company-profile-form-group">
               <label
                 htmlFor="post-description"
@@ -878,7 +928,6 @@ const CompanyProfilePage = () => {
                 className="company-profile-textarea"
               />
             </div>
-
             <div className="company-profile-form-group">
               <label htmlFor="post-photo" className="company-profile-label">
                 Post Image
@@ -901,7 +950,6 @@ const CompanyProfilePage = () => {
                 )}
               </div>
             </div>
-
             <div className="company-profile-button-group">
               <button
                 type="submit"
@@ -924,7 +972,6 @@ const CompanyProfilePage = () => {
                 </button>
               )}
             </div>
-
             {postSuccess && (
               <div className="company-profile-success">
                 Post {editingPostId ? "updated" : "added"} successfully!
@@ -935,7 +982,6 @@ const CompanyProfilePage = () => {
             )}
           </form>
 
-          {/* Posts Management List */}
           {posts.length > 0 && (
             <div className="company-profile-posts-manage">
               <h3 className="company-profile-manage-title">Your Posts</h3>
@@ -956,40 +1002,14 @@ const CompanyProfilePage = () => {
                         className="company-profile-icon-button company-profile-icon-button-edit"
                         title="Edit"
                       >
-                        <svg
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          width="18"
-                          height="18"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                          />
-                        </svg>
+                        Edit
                       </button>
                       <button
                         onClick={() => handleDeletePost(post.id)}
                         className="company-profile-icon-button company-profile-icon-button-delete"
                         title="Delete"
                       >
-                        <svg
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          width="18"
-                          height="18"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
+                        Delete
                       </button>
                     </div>
                   </div>
@@ -1000,7 +1020,6 @@ const CompanyProfilePage = () => {
         </div>
       </div>
 
-      {/* Applicants Modal */}
       {showApplicantsModal && (
         <div className="company-modal-overlay" onClick={closeApplicantsModal}>
           <div
@@ -1028,160 +1047,97 @@ const CompanyProfilePage = () => {
                   No applicants yet for this position.
                 </div>
               ) : (
-                // <div className="company-applicants-list">
-                //   {applicants.map((application) => (
-                //     <div
-                //       key={application.id}
-                //       className="company-applicant-card"
-                //     >
-                //       <div className="company-applicant-header">
-                //         {application.seeker?.photo ? (
-                //           <img
-                //             src={
-                //               application.seeker.photo.startsWith("http")
-                //                 ? application.seeker.photo
-                //                 : `${import.meta.env.VITE_API_URL}/storage/${
-                //                     application.seeker.photo
-                //                   }`
-                //             }
-                //             alt={application.seeker.user?.name}
-                //             className="company-applicant-photo"
-                //           />
-                //         ) : (
-                //           <div className="company-applicant-photo-placeholder">
-                //             {application.seeker.user?.name
-                //               ?.charAt(0)
-                //               .toUpperCase() || "?"}
-                //           </div>
-                //         )}
-                //         <div className="company-applicant-info">
-                //           <h3 className="company-applicant-name">
-                //             {application.seeker.user?.name || "Unknown"}
-                //           </h3>
-                //           <div className="company-applicant-contact">
-                //             <div className="company-applicant-contact-item">
-                //               <svg
-                //                 fill="none"
-                //                 stroke="currentColor"
-                //                 viewBox="0 0 24 24"
-                //                 width="16"
-                //                 height="16"
-                //               >
-                //                 <path
-                //                   strokeLinecap="round"
-                //                   strokeLinejoin="round"
-                //                   strokeWidth={2}
-                //                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                //                 />
-                //               </svg>
-                //               <a
-                //                 href={`mailto:${application.seeker.user?.email}`}
-                //                 className="company-applicant-email"
-                //               >
-                //                 {application.seeker.user?.email}
-                //               </a>
-                //             </div>
-                //             {application.seeker.user?.phone && (
-                //               <div className="company-applicant-contact-item">
-                //                 <svg
-                //                   fill="none"
-                //                   stroke="currentColor"
-                //                   viewBox="0 0 24 24"
-                //                   width="16"
-                //                   height="16"
-                //                 >
-                //                   <path
-                //                     strokeLinecap="round"
-                //                     strokeLinejoin="round"
-                //                     strokeWidth={2}
-                //                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                //                   />
-                //                 </svg>
-                //                 <span>{application.seeker.user.phone}</span>
-                //               </div>
-                //             )}
-                //           </div>
-                //         </div>
-                //       </div>
-                //       {application.seeker.skills && (
-                //         <div className="company-applicant-skills">
-                //           <strong>Skills:</strong> {application.seeker.skills}
-                //         </div>
-                //       )}
-                //       {application.seeker.description && (
-                //         <div className="company-applicant-description">
-                //           {application.seeker.description}
-                //         </div>
-                //       )}
-                //       {application.seeker.projects &&
-                //         application.seeker.projects.length > 0 && (
-                //           <div className="company-applicant-projects">
-                //             <strong>Projects:</strong>
-                //             <ul>
-                //               {application.seeker.projects.map((project) => (
-                //                 <li key={project.id}>
-                //                   <strong>{project.title}</strong>
-                //                   {project.link && (
-                //                     <a
-                //                       href={project.link}
-                //                       target="_blank"
-                //                       rel="noopener noreferrer"
-                //                       className="company-project-link"
-                //                     >
-                //                       View Project →
-                //                     </a>
-                //                   )}
-                //                 </li>
-                //               ))}
-                //             </ul>
-                //           </div>
-                //         )}
-                //       <div className="company-applicant-footer">
-                //         Applied on{" "}
-                //         {new Date(application.created_at).toLocaleDateString()}
-                //       </div>
-                //     </div>
-                //   ))}
-                // </div>
                 <div className="company-applicants-list">
                   {applicants.map((application) => {
                     const seeker = application.seeker || {};
                     const seekerId = seeker.id;
                     const seekerName =
                       seeker.user?.name || seeker.name || "Unknown";
-                    const photo =
-                      seeker.photo && seeker.photo.startsWith("http")
+                    const photo = seeker.photo
+                      ? seeker.photo.startsWith("http")
                         ? seeker.photo
-                        : seeker.photo
-                        ? `${import.meta.env.VITE_API_URL}/storage/${
+                        : `${import.meta.env.VITE_API_URL}/storage/${
                             seeker.photo
                           }`
-                        : null;
+                      : null;
 
                     return (
-                      <button
+                      <div
                         key={application.id}
                         className="company-applicant-compact"
-                        onClick={() => {
-                          if (seekerId) navigate(`/seekers/${seekerId}`);
-                          closeApplicantsModal();
-                        }}
                       >
-                        {photo ? (
-                          <img
-                            src={photo}
-                            alt={seekerName}
-                            className="company-applicant-photo"
-                          />
-                        ) : (
-                          <div className="company-applicant-photo-placeholder">
-                            {seekerName?.charAt(0)?.toUpperCase() || "?"}
-                          </div>
-                        )}
-                        <span className="company-applicant-name">
-                          {seekerName}
-                        </span>
-                      </button>
+                        <button
+                          className="applicant-link"
+                          onClick={() => {
+                            if (seekerId) navigate(`/seekers/${seekerId}`);
+                            closeApplicantsModal();
+                          }}
+                        >
+                          {photo ? (
+                            <img
+                              src={photo}
+                              alt={seekerName}
+                              className="company-applicant-photo"
+                            />
+                          ) : (
+                            <div className="company-applicant-photo-placeholder">
+                              {seekerName?.charAt(0)?.toUpperCase() || "?"}
+                            </div>
+                          )}
+                          <span className="company-applicant-name">
+                            {seekerName}
+                          </span>
+                        </button>
+                        <div className="company-applicant-actions">
+                          {application.status === "applied" && (
+                            <>
+                              <button
+                                onClick={() =>
+                                  acceptApplication(application.id)
+                                }
+                                className="btn-accept"
+                              >
+                                Accept
+                              </button>
+                              <button
+                                onClick={() =>
+                                  rejectApplication(application.id)
+                                }
+                                className="btn-reject"
+                              >
+                                Reject
+                              </button>
+                            </>
+                          )}
+                          {["accepted", "in_progress"].includes(
+                            application.status
+                          ) && (
+                            <>
+                              <button
+                                onClick={() =>
+                                  rejectApplication(application.id)
+                                }
+                                className="btn-reject"
+                              >
+                                Reject
+                              </button>
+                              <button
+                                onClick={() =>
+                                  completeApplication(application.id)
+                                }
+                                className="btn-finish"
+                              >
+                                Finish Internship
+                              </button>
+                            </>
+                          )}
+                          {application.status === "completed" && (
+                            <span className="badge-rated">
+                              ✓ Completed & Rated
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
@@ -1191,7 +1147,34 @@ const CompanyProfilePage = () => {
         </div>
       )}
 
-      {/* Request Response Modal */}
+      {ratingModalOpen && (
+        <div
+          className="company-modal-overlay"
+          onClick={() => setRatingModalOpen(false)}
+        >
+          <div
+            className="company-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="company-modal-header">
+              <h2 className="company-modal-title">Rate Intern</h2>
+              <button
+                onClick={() => setRatingModalOpen(false)}
+                className="company-modal-close"
+              >
+                ×
+              </button>
+            </div>
+            <div className="company-modal-body">
+              <RatingForm
+                onCancel={() => setRatingModalOpen(false)}
+                onSubmit={submitRating}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {showRequestModal && selectedRequest && (
         <div
           className="company-modal-overlay"
@@ -1227,7 +1210,6 @@ const CompanyProfilePage = () => {
               <p>
                 <strong>Description:</strong> {selectedRequest.description}
               </p>
-
               <div className="company-profile-form-group">
                 <label className="company-profile-label">
                   Response Message (optional)
@@ -1240,7 +1222,6 @@ const CompanyProfilePage = () => {
                   className="company-profile-textarea"
                 />
               </div>
-
               <div className="modal-actions">
                 <button
                   onClick={() => handleAcceptRequest(selectedRequest.id)}

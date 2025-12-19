@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\InternshipRequestController;
 use App\Http\Controllers\Api\AdminCompanyController;
 use App\Http\Controllers\Api\SkillController;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -98,12 +99,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/company/requests', [InternshipRequestController::class, 'companyRequests']);
         Route::post('/internship-requests/{id}/accept', [InternshipRequestController::class, 'acceptRequest']);
         Route::post('/internship-requests/{id}/reject', [InternshipRequestController::class, 'rejectRequest']);
+
+        // Company actions on individual applications
+        Route::post('/applications/{id}/accept', [ApplicationController::class, 'acceptApplication']);
+        Route::post('/applications/{id}/reject', [ApplicationController::class, 'rejectApplication']);
+        Route::post('/applications/{id}/complete', [ApplicationController::class, 'completeApplication']);
+        Route::post('/applications/{id}/rating', [ApplicationController::class, 'rateApplication']);
     });
 
     // Seeker routes
     Route::middleware('seeker')->group(function () {
         Route::get('/seeker/me', [SeekerController::class, 'me']);
+        Route::get('/seeker/ratings', [SeekerController::class, 'getRatings']);
         Route::put('/seeker/update', [SeekerController::class, 'update']);
+        Route::patch('/ratings/{id}/publish', [SeekerController::class, 'publishRating']);
 
         // Seeker projects
         Route::get('/seeker/projects', [ProjectController::class, 'myProjects']);

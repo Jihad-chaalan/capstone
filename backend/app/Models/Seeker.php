@@ -61,4 +61,8 @@ class Seeker extends Model
     {
         return $this->belongsToMany(Skill::class, 'seeker_skill');
     }
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
 }

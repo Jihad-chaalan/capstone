@@ -112,4 +112,51 @@ class SeekerController extends Controller
             'data' => $seeker
         ]);
     }
+
+    /**
+     * Get ratings for authenticated seeker
+     */
+    public function getRatings(Request $request)
+    {
+        if (!$request->user()->isSeeker()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only seekers can access this endpoint'
+            ], 403);
+        }
+
+        $seeker = $request->user()->seeker;
+        $ratings = $seeker->ratings()->with('company.user', 'application')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $ratings
+        ]);
+    }
+
+    /**
+     * Publish/unpublish a rating
+     */
+    public function publishRating(Request $request, $id)
+    {
+        if (!$request->user()->isSeeker()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only seekers can access this endpoint'
+            ], 403);
+        }
+
+        $seeker = $request->user()->seeker;
+        $rating = $seeker->ratings()->findOrFail($id);
+
+        // Toggle visibility
+        $rating->visible = !$rating->visible;
+        $rating->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => $rating->visible ? 'Rating published successfully' : 'Rating unpublished successfully',
+            'data' => $rating
+        ]);
+    }
 }

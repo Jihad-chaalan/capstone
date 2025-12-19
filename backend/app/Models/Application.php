@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Application extends Model
 {
     use HasFactory;
@@ -33,5 +34,9 @@ class Application extends Model
     public function seeker()
     {
         return $this->belongsTo(Seeker::class, 'internship_seeker_id');
+    }
+    public function rating()
+    {
+        return $this->hasOne(Rating::class);
     }
 }

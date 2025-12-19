@@ -19,6 +19,9 @@ const SeekerProfilePage = () => {
     photo: "",
     projects: [],
     skills_list: [],
+    average_rating: 0,
+    rating_count: 0,
+    applications: [],
   });
   const [form, setForm] = useState({ description: "" });
   const [photoFile, setPhotoFile] = useState(null);
@@ -46,6 +49,9 @@ const SeekerProfilePage = () => {
   const [projectSaving, setProjectSaving] = useState(false);
   const [projectError, setProjectError] = useState(null);
   const [projectSuccess, setProjectSuccess] = useState(false);
+
+  // Ratings state (for seeker to publish)
+  const [ratings, setRatings] = useState([]);
 
   // Load available skills
   useEffect(() => {
@@ -81,14 +87,18 @@ const SeekerProfilePage = () => {
         description: seeker.description || "No description available",
         photo: photoUrl,
         projects: seeker.projects || [],
-        skills_list: seeker.skills_list || [],
+        skills_list: seeker.skills_list || seeker.skillsList || [],
+        average_rating: seeker.average_rating || 0,
+        rating_count: seeker.rating_count || 0,
+        applications: seeker.applications || [],
       });
 
       setProjects(seeker.projects || []);
       setPhotoPreview(photoUrl);
 
       // Set selected skills
-      const seekerSkillIds = seeker.skills_list?.map((s) => s.id) || [];
+      const skillsList = seeker.skills_list || seeker.skillsList || [];
+      const seekerSkillIds = skillsList.map((s) => s.id) || [];
       setSelectedSkills(seekerSkillIds);
 
       setLoading(false);
@@ -99,50 +109,21 @@ const SeekerProfilePage = () => {
     }
   };
 
-  // useEffect(() => {
-  //   loadProfile();
-  // }, []);
+  async function fetchRatings() {
+    try {
+      const res = await api.get("/seeker/ratings");
+      setRatings(res.data.data || []);
+    } catch (err) {
+      console.error("Error fetching ratings:", err);
+      setRatings([]);
+    }
+  }
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await api.get("/seeker/me");
-        const seeker = res.data.data;
-
-        const photoUrl = seeker.photo
-          ? seeker.photo.startsWith("http")
-            ? seeker.photo
-            : `${import.meta.env.VITE_API_URL}/storage/${seeker.photo}`
-          : "";
-
-        setForm({
-          description: seeker.description || "",
-        });
-
-        setSeekerData({
-          name: seeker.user?.name || "User",
-          description: seeker.description || "No description available",
-          photo: photoUrl,
-          projects: seeker.projects || [],
-          skills_list: seeker.skills_list || [],
-        });
-
-        setProjects(seeker.projects || []);
-        setPhotoPreview(photoUrl);
-
-        // Set selected skills
-        const seekerSkillIds = seeker.skills_list?.map((s) => s.id) || [];
-        setSelectedSkills(seekerSkillIds);
-
-        setLoading(false);
-      } catch (err) {
-        console.error("Error loading profile:", err);
-        setError("Failed to load profile.");
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
+    Promise.resolve().then(() => {
+      loadProfile();
+      fetchRatings();
+    });
   }, []);
 
   // Close menu when clicking outside
@@ -295,6 +276,18 @@ const SeekerProfilePage = () => {
     }
   };
 
+  const handlePublishRating = async (ratingId) => {
+    try {
+      await api.patch(`/ratings/${ratingId}/publish`);
+      await fetchRatings();
+      await loadProfile();
+      alert("Rating published to your public profile.");
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to publish rating");
+    }
+  };
+
   if (loading) {
     return (
       <div className="seeker-profile-loading">Loading your profile...</div>
@@ -385,6 +378,10 @@ const SeekerProfilePage = () => {
               <p className="seeker-profile-type">Internship Seeker</p>
               <div className="seeker-profile-meta">
                 <div className="seeker-profile-meta-item">
+                  ⭐ {(Number(seekerData.average_rating) || 0).toFixed(1)} (
+                  {Number(seekerData.rating_count) || 0} ratings)
+                </div>
+                <div className="seeker-profile-meta-item">
                   <svg
                     className="seeker-profile-icon"
                     fill="none"
@@ -419,6 +416,81 @@ const SeekerProfilePage = () => {
               {seekerData.description}
             </p>
           </div>
+        </div>
+
+        {/* Current/Past Internships Section */}
+        <div className="seeker-profile-form-card">
+          <h2 className="seeker-profile-form-title">
+            Current / Past Internships
+          </h2>
+          {seekerData.applications && seekerData.applications.length > 0 ? (
+            <div className="seeker-internship-list">
+              {seekerData.applications.map((app) => (
+                <div key={app.id} className="seeker-internship-item">
+                  <div>
+                    <strong>
+                      {app.post?.company?.user?.name ||
+                        app.post?.company?.name ||
+                        "Company"}
+                    </strong>
+                    <div>{app.post?.position}</div>
+                    <div className="muted">
+                      Status: {app.status}
+                      {app.started_at &&
+                        ` • Started: ${new Date(
+                          app.started_at
+                        ).toLocaleDateString()}`}
+                      {app.completed_at &&
+                        ` • Completed: ${new Date(
+                          app.completed_at
+                        ).toLocaleDateString()}`}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="empty">You have no internship applications yet.</p>
+          )}
+        </div>
+
+        {/* Ratings Section */}
+        <div className="seeker-profile-form-card">
+          <h2 className="seeker-profile-form-title">Ratings from Companies</h2>
+          {ratings.length === 0 ? (
+            <p className="empty">No ratings yet.</p>
+          ) : (
+            <div className="seeker-ratings-list">
+              {ratings.map((r) => (
+                <div key={r.id} className="rating-card">
+                  <div className="rating-head">
+                    <strong>
+                      {r.company?.user?.name || r.company?.name || "Company"}
+                    </strong>
+                    <span className="rating-score">⭐ {r.score} / 5</span>
+                  </div>
+                  {r.comment && <p className="rating-comment">{r.comment}</p>}
+                  <div className="rating-footer">
+                    <span className="rating-date">
+                      {new Date(r.created_at).toLocaleDateString()}
+                    </span>
+                    {!r.visible && (
+                      <button
+                        onClick={() => handlePublishRating(r.id)}
+                        className="btn-primary"
+                        style={{ marginLeft: 12 }}
+                      >
+                        Publish to profile
+                      </button>
+                    )}
+                    {r.visible && (
+                      <span className="badge-published">✓ Published</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Projects Section */}

@@ -680,3 +680,117 @@
     font-size: 0.8125rem;
   }
 }
+
+/* Internships Section */
+.seeker-internship-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.seeker-internship-item {
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.seeker-internship-item strong {
+  color: #1f2937;
+  font-size: 16px;
+}
+
+.seeker-internship-item .muted {
+  color: #6b7280;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* Ratings Section */
+.seeker-ratings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rating-card {
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.rating-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.rating-head strong {
+  color: #1f2937;
+  font-size: 16px;
+}
+
+.rating-score {
+  color: #f59e0b;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.rating-comment {
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 4px;
+  border-left: 3px solid #3b82f6;
+}
+
+.rating-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.rating-date {
+  color: #9ca3af;
+}
+
+.badge-published {
+  padding: 4px 12px;
+  background-color: #d1fae5;
+  color: #065f46;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Empty state */
+.empty {
+  color: #9ca3af;
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Skills display in profile header */
+.skills-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.skill-badge-display {
+  padding: 4px 12px;
+  background-color: #e0e7ff;
+  color: #4338ca;
+  border-radius: 12px;
+  font-size: 13px;
+}
