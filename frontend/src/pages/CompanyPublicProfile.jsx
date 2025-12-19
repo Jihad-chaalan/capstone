@@ -13,38 +13,71 @@ const CompanyPublicProfilePage = () => {
   const [applyingPostId, setApplyingPostId] = useState(null);
   const [appliedPosts, setAppliedPosts] = useState(new Set());
 
+  // useEffect(() => {
+  //   fetchCompanyProfile();
+  //   fetchApplications();
+  // }, [id]);
+
+  // const fetchCompanyProfile = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await api.get(`/companies/${id}`);
+  //     if (response.data.success) {
+  //       setCompany(response.data.data);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error fetching company:", err);
+  //     setError("Failed to load company profile");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // const fetchApplications = async () => {
+  //   try {
+  //     const response = await api.get("/seeker/applications");
+  //     const applications = response.data.data.data || response.data.data || [];
+  //     const postIds = new Set(
+  //       applications.map((app) => app.internship_post_id)
+  //     );
+  //     setAppliedPosts(postIds);
+  //   } catch (err) {
+  //     console.error("Failed to load applications:", err);
+  //   }
+  // };
   useEffect(() => {
+    const fetchCompanyProfile = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get(`/companies/${id}`);
+        if (response.data.success) {
+          setCompany(response.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching company:", err);
+        setError("Failed to load company profile");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchApplications = async () => {
+      try {
+        const response = await api.get("/seeker/applications");
+        const applications =
+          response.data.data.data || response.data.data || [];
+        const postIds = new Set(
+          applications.map((app) => app.internship_post_id)
+        );
+        setAppliedPosts(postIds);
+      } catch (err) {
+        console.error("Failed to load applications:", err);
+      }
+    };
+
     fetchCompanyProfile();
     fetchApplications();
   }, [id]);
-
-  const fetchCompanyProfile = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get(`/companies/${id}`);
-      if (response.data.success) {
-        setCompany(response.data.data);
-      }
-    } catch (err) {
-      console.error("Error fetching company:", err);
-      setError("Failed to load company profile");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchApplications = async () => {
-    try {
-      const response = await api.get("/seeker/applications");
-      const applications = response.data.data.data || response.data.data || [];
-      const postIds = new Set(
-        applications.map((app) => app.internship_post_id)
-      );
-      setAppliedPosts(postIds);
-    } catch (err) {
-      console.error("Failed to load applications:", err);
-    }
-  };
 
   const handleApply = async (postId) => {
     if (applyingPostId) return;

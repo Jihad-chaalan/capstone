@@ -1,0 +1,185 @@
+.seeker-public-page {
+  padding: 28px 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+  color: #0f172a;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+.seeker-public-header {
+  margin-bottom: 12px;
+}
+.btn-back-arrow {
+  background: none;
+  border: none;
+  color: #374151;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.seeker-public-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Aside */
+.seeker-public-aside {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.seeker-photo-wrap {
+  width: 140px;
+  height: 140px;
+}
+.seeker-photo {
+  width: 140px;
+  height: 140px;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+}
+.seeker-photo-placeholder {
+  width: 140px;
+  height: 140px;
+  border-radius: 12px;
+  background: #eef2ff;
+  color: #1e3a8a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.seeker-name {
+  margin: 4px 0 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.seeker-contact {
+  font-size: 0.95rem;
+  color: #374151;
+  margin-top: 6px;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+/* Skills */
+.seeker-meta {
+  width: 100%;
+  margin-top: 10px;
+}
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.skill-badge {
+  background: #eef2ff;
+  color: #1e3a8a;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.no-skills {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* Main content */
+.seeker-public-main {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.seeker-about,
+.seeker-projects {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+}
+
+.seeker-about h3,
+.seeker-projects h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.seeker-description {
+  color: #374151;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* Projects */
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.project-card {
+  border: 1px solid #eef2f6;
+  border-radius: 8px;
+  padding: 12px;
+  background: white;
+}
+.project-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+.project-title {
+  font-weight: 700;
+}
+.project-link {
+  font-size: 0.9rem;
+  color: #2563eb;
+  text-decoration: none;
+}
+.project-desc {
+  margin-top: 8px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+/* Utilities */
+.empty {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+/* Responsive */
+@media (max-width: 880px) {
+  .seeker-public-container {
+    grid-template-columns: 1fr;
+  }
+  .seeker-public-aside {
+    flex-direction: row;
+    align-items: center;
+    padding: 12px;
+  }
+  .seeker-photo-wrap, .seeker-photo, .seeker-photo-placeholder {
+    width: 84px;
+    height: 84px;
+  }
+  .seeker-name { font-size: 1.05rem; }
+  .seeker-public-aside { gap: 12px; justify-content: flex-start; }
+  .seeker-public-aside .seeker-meta { display: none; }
+}

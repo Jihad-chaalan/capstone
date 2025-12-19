@@ -1028,120 +1028,162 @@ const CompanyProfilePage = () => {
                   No applicants yet for this position.
                 </div>
               ) : (
+                // <div className="company-applicants-list">
+                //   {applicants.map((application) => (
+                //     <div
+                //       key={application.id}
+                //       className="company-applicant-card"
+                //     >
+                //       <div className="company-applicant-header">
+                //         {application.seeker?.photo ? (
+                //           <img
+                //             src={
+                //               application.seeker.photo.startsWith("http")
+                //                 ? application.seeker.photo
+                //                 : `${import.meta.env.VITE_API_URL}/storage/${
+                //                     application.seeker.photo
+                //                   }`
+                //             }
+                //             alt={application.seeker.user?.name}
+                //             className="company-applicant-photo"
+                //           />
+                //         ) : (
+                //           <div className="company-applicant-photo-placeholder">
+                //             {application.seeker.user?.name
+                //               ?.charAt(0)
+                //               .toUpperCase() || "?"}
+                //           </div>
+                //         )}
+                //         <div className="company-applicant-info">
+                //           <h3 className="company-applicant-name">
+                //             {application.seeker.user?.name || "Unknown"}
+                //           </h3>
+                //           <div className="company-applicant-contact">
+                //             <div className="company-applicant-contact-item">
+                //               <svg
+                //                 fill="none"
+                //                 stroke="currentColor"
+                //                 viewBox="0 0 24 24"
+                //                 width="16"
+                //                 height="16"
+                //               >
+                //                 <path
+                //                   strokeLinecap="round"
+                //                   strokeLinejoin="round"
+                //                   strokeWidth={2}
+                //                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                //                 />
+                //               </svg>
+                //               <a
+                //                 href={`mailto:${application.seeker.user?.email}`}
+                //                 className="company-applicant-email"
+                //               >
+                //                 {application.seeker.user?.email}
+                //               </a>
+                //             </div>
+                //             {application.seeker.user?.phone && (
+                //               <div className="company-applicant-contact-item">
+                //                 <svg
+                //                   fill="none"
+                //                   stroke="currentColor"
+                //                   viewBox="0 0 24 24"
+                //                   width="16"
+                //                   height="16"
+                //                 >
+                //                   <path
+                //                     strokeLinecap="round"
+                //                     strokeLinejoin="round"
+                //                     strokeWidth={2}
+                //                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                //                   />
+                //                 </svg>
+                //                 <span>{application.seeker.user.phone}</span>
+                //               </div>
+                //             )}
+                //           </div>
+                //         </div>
+                //       </div>
+                //       {application.seeker.skills && (
+                //         <div className="company-applicant-skills">
+                //           <strong>Skills:</strong> {application.seeker.skills}
+                //         </div>
+                //       )}
+                //       {application.seeker.description && (
+                //         <div className="company-applicant-description">
+                //           {application.seeker.description}
+                //         </div>
+                //       )}
+                //       {application.seeker.projects &&
+                //         application.seeker.projects.length > 0 && (
+                //           <div className="company-applicant-projects">
+                //             <strong>Projects:</strong>
+                //             <ul>
+                //               {application.seeker.projects.map((project) => (
+                //                 <li key={project.id}>
+                //                   <strong>{project.title}</strong>
+                //                   {project.link && (
+                //                     <a
+                //                       href={project.link}
+                //                       target="_blank"
+                //                       rel="noopener noreferrer"
+                //                       className="company-project-link"
+                //                     >
+                //                       View Project →
+                //                     </a>
+                //                   )}
+                //                 </li>
+                //               ))}
+                //             </ul>
+                //           </div>
+                //         )}
+                //       <div className="company-applicant-footer">
+                //         Applied on{" "}
+                //         {new Date(application.created_at).toLocaleDateString()}
+                //       </div>
+                //     </div>
+                //   ))}
+                // </div>
                 <div className="company-applicants-list">
-                  {applicants.map((application) => (
-                    <div
-                      key={application.id}
-                      className="company-applicant-card"
-                    >
-                      <div className="company-applicant-header">
-                        {application.seeker?.photo ? (
+                  {applicants.map((application) => {
+                    const seeker = application.seeker || {};
+                    const seekerId = seeker.id;
+                    const seekerName =
+                      seeker.user?.name || seeker.name || "Unknown";
+                    const photo =
+                      seeker.photo && seeker.photo.startsWith("http")
+                        ? seeker.photo
+                        : seeker.photo
+                        ? `${import.meta.env.VITE_API_URL}/storage/${
+                            seeker.photo
+                          }`
+                        : null;
+
+                    return (
+                      <button
+                        key={application.id}
+                        className="company-applicant-compact"
+                        onClick={() => {
+                          if (seekerId) navigate(`/seekers/${seekerId}`);
+                          closeApplicantsModal();
+                        }}
+                      >
+                        {photo ? (
                           <img
-                            src={
-                              application.seeker.photo.startsWith("http")
-                                ? application.seeker.photo
-                                : `${import.meta.env.VITE_API_URL}/storage/${
-                                    application.seeker.photo
-                                  }`
-                            }
-                            alt={application.seeker.user?.name}
+                            src={photo}
+                            alt={seekerName}
                             className="company-applicant-photo"
                           />
                         ) : (
                           <div className="company-applicant-photo-placeholder">
-                            {application.seeker.user?.name
-                              ?.charAt(0)
-                              .toUpperCase() || "?"}
+                            {seekerName?.charAt(0)?.toUpperCase() || "?"}
                           </div>
                         )}
-                        <div className="company-applicant-info">
-                          <h3 className="company-applicant-name">
-                            {application.seeker.user?.name || "Unknown"}
-                          </h3>
-                          <div className="company-applicant-contact">
-                            <div className="company-applicant-contact-item">
-                              <svg
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                width="16"
-                                height="16"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                />
-                              </svg>
-                              <a
-                                href={`mailto:${application.seeker.user?.email}`}
-                                className="company-applicant-email"
-                              >
-                                {application.seeker.user?.email}
-                              </a>
-                            </div>
-                            {application.seeker.user?.phone && (
-                              <div className="company-applicant-contact-item">
-                                <svg
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                  width="16"
-                                  height="16"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                                  />
-                                </svg>
-                                <span>{application.seeker.user.phone}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      {application.seeker.skills && (
-                        <div className="company-applicant-skills">
-                          <strong>Skills:</strong> {application.seeker.skills}
-                        </div>
-                      )}
-                      {application.seeker.description && (
-                        <div className="company-applicant-description">
-                          {application.seeker.description}
-                        </div>
-                      )}
-                      {application.seeker.projects &&
-                        application.seeker.projects.length > 0 && (
-                          <div className="company-applicant-projects">
-                            <strong>Projects:</strong>
-                            <ul>
-                              {application.seeker.projects.map((project) => (
-                                <li key={project.id}>
-                                  <strong>{project.title}</strong>
-                                  {project.link && (
-                                    <a
-                                      href={project.link}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="company-project-link"
-                                    >
-                                      View Project →
-                                    </a>
-                                  )}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      <div className="company-applicant-footer">
-                        Applied on{" "}
-                        {new Date(application.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                  ))}
+                        <span className="company-applicant-name">
+                          {seekerName}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
