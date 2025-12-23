@@ -54,7 +54,6 @@ const RatingForm = ({ initialScore = 5, onSubmit, onCancel }) => {
 const CompanyProfilePage = () => {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
-  const menuRef = useRef(null);
   const fileInputRef = useRef(null);
   const postFileInputRef = useRef(null);
 
@@ -79,7 +78,6 @@ const CompanyProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
 
   const [posts, setPosts] = useState([]);
   const [postForm, setPostForm] = useState({
@@ -104,9 +102,14 @@ const CompanyProfilePage = () => {
   const [ratingApplicationId, setRatingApplicationId] = useState(null);
 
   const [incomingRequests, setIncomingRequests] = useState([]);
-  const [showRequestModal, setShowRequestModal] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [responseText, setResponseText] = useState("");
+
+  // Smooth scroll helper function
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   const normalizeList = (payload) => {
     if (!payload) return [];
@@ -176,29 +179,12 @@ const CompanyProfilePage = () => {
       fetchApplications();
       fetchIncomingRequests();
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowMenu(false);
-      }
-    };
-    if (showMenu) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showMenu]);
 
   const handleLogout = async () => {
     await logout();
     navigate("/login");
-  };
-
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
   };
 
   const handleInputChange = (e) => {
@@ -337,6 +323,9 @@ const CompanyProfilePage = () => {
     setEditingPostId(post.id);
     setPostSuccess(false);
     setPostError(null);
+
+    // Scroll to add post section when editing
+    setTimeout(() => scrollToSection("add-post-section"), 100);
   };
 
   const handleCancelEdit = () => {
@@ -457,45 +446,6 @@ const CompanyProfilePage = () => {
     }
   };
 
-  const handleAcceptRequest = async (requestId) => {
-    try {
-      await api.post(`/internship-requests/${requestId}/accept`, {
-        response: responseText,
-      });
-      setShowRequestModal(false);
-      setResponseText("");
-      await fetchIncomingRequests();
-      alert("Request accepted successfully!");
-    } catch (error) {
-      console.error("Error accepting request:", error);
-      alert("Failed to accept request");
-    }
-  };
-
-  const handleRejectRequest = async (requestId) => {
-    try {
-      await api.post(`/internship-requests/${requestId}/reject`, {
-        response: responseText,
-      });
-      setShowRequestModal(false);
-      setResponseText("");
-      await fetchIncomingRequests();
-      alert("Request rejected");
-    } catch (error) {
-      console.error("Error rejecting request:", error);
-      alert("Failed to reject request");
-    }
-  };
-
-  const getRequestStatusBadge = (status) => {
-    const badges = {
-      pending: "status-pending",
-      accepted: "status-accepted",
-      rejected: "status-rejected",
-    };
-    return badges[status] || "status-pending";
-  };
-
   const safeApplications = Array.isArray(applications) ? applications : [];
   const acceptedInterns = safeApplications.filter((a) =>
     ["accepted", "in_progress"].includes(a.status)
@@ -513,28 +463,78 @@ const CompanyProfilePage = () => {
         <div className="company-profile-navbar-container">
           <div className="company-profile-navbar-content">
             <h1 className="company-profile-navbar-brand">Int Leb Web</h1>
-            <div className="company-profile-menu-wrapper" ref={menuRef}>
+            <div className="company-profile-navbar-actions">
               <button
-                onClick={toggleMenu}
-                className="company-profile-menu-button"
-                aria-label="Menu"
+                onClick={() => navigate("/company/requests")}
+                className="company-profile-nav-button"
+                title="University Requests"
               >
-                •••
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                {incomingRequests.filter((r) => r.status === "pending").length >
+                  0 && (
+                  <span className="notification-badge">
+                    {
+                      incomingRequests.filter((r) => r.status === "pending")
+                        .length
+                    }
+                  </span>
+                )}
               </button>
-              {showMenu && (
-                <div className="company-profile-dropdown">
-                  <button
-                    onClick={handleLogout}
-                    className="company-profile-dropdown-item"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              )}
+              <button
+                onClick={handleLogout}
+                className="company-profile-nav-logout"
+                title="Sign Out"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
       </nav>
+
+      {/* QUICK ACTIONS FLOATING BUTTONS */}
+      <div className="company-quick-actions">
+        <button
+          onClick={() => scrollToSection("add-post-section")}
+          className="quick-action-btn quick-action-primary"
+          title="Add Post"
+        >
+          + Add Post
+        </button>
+        <button
+          onClick={() => scrollToSection("edit-profile-section")}
+          className="quick-action-btn"
+          title="Edit Profile"
+        >
+          ✏️ Edit Profile
+        </button>
+      </div>
 
       <div className="company-profile-container">
         {companyData.verification_status === "pending" && (
@@ -557,7 +557,7 @@ const CompanyProfilePage = () => {
             </div>
           )}
 
-        <div className="company-profile-header">
+        <div id="profile-header-section" className="company-profile-header">
           <div className="company-profile-banner"></div>
           <div className="company-profile-info-section">
             <div className="company-profile-logo-wrapper">
@@ -684,67 +684,22 @@ const CompanyProfilePage = () => {
           )}
         </div>
 
-        <div className="company-requests-section">
+        <div
+          className="company-requests-section company-requests-link-card"
+          onClick={() => navigate("/company/requests")}
+        >
           <h2 className="company-profile-section-title">
-            Internship Requests from Universities
+            University Requests
+            {incomingRequests.length > 0 && (
+              <span className="requests-count-badge">
+                {incomingRequests.length}
+              </span>
+            )}
           </h2>
-          {incomingRequests.length === 0 ? (
-            <p className="company-requests-empty">No requests yet.</p>
-          ) : (
-            <div className="company-requests-list">
-              {incomingRequests.map((request) => (
-                <div key={request.id} className="company-request-card">
-                  <div className="company-request-header">
-                    <h3 className="company-request-title">
-                      {request.position}
-                    </h3>
-                    <span
-                      className={`request-status-badge ${getRequestStatusBadge(
-                        request.status
-                      )}`}
-                    >
-                      {request.status}
-                    </span>
-                  </div>
-                  <div className="company-request-body">
-                    <p>
-                      <strong>University:</strong>{" "}
-                      {request.university?.user?.name}
-                    </p>
-                    <p>
-                      <strong>Technology:</strong> {request.technology}
-                    </p>
-                    <p>
-                      <strong>Students Needed:</strong>{" "}
-                      {request.number_of_students}
-                    </p>
-                    <p>
-                      <strong>Description:</strong> {request.description}
-                    </p>
-                    {request.company_response && (
-                      <div className="company-request-response">
-                        <strong>Your Response:</strong>
-                        <p>{request.company_response}</p>
-                      </div>
-                    )}
-                  </div>
-                  {request.status === "pending" && (
-                    <div className="company-request-actions">
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowRequestModal(true);
-                        }}
-                        className="btn-view-request"
-                      >
-                        Respond
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+          <p className="requests-link-text">
+            View and manage internship requests from universities
+          </p>
+          <button className="requests-view-all-btn">View All Requests →</button>
         </div>
 
         {companyData.posts.length > 0 && (
@@ -793,7 +748,7 @@ const CompanyProfilePage = () => {
           </div>
         )}
 
-        <div className="company-profile-form-card">
+        <div id="edit-profile-section" className="company-profile-form-card">
           <h2 className="company-profile-form-title">Edit Company Profile</h2>
           <form onSubmit={handleSubmit} encType="multipart/form-data">
             <div className="company-profile-form-group">
@@ -876,7 +831,7 @@ const CompanyProfilePage = () => {
           </form>
         </div>
 
-        <div className="company-profile-form-card">
+        <div id="add-post-section" className="company-profile-form-card">
           <h2 className="company-profile-form-title">
             {editingPostId ? "Edit Post" : "Add New Internship Post"}
           </h2>
@@ -1170,81 +1125,6 @@ const CompanyProfilePage = () => {
                 onCancel={() => setRatingModalOpen(false)}
                 onSubmit={submitRating}
               />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showRequestModal && selectedRequest && (
-        <div
-          className="company-modal-overlay"
-          onClick={() => setShowRequestModal(false)}
-        >
-          <div
-            className="company-modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="company-modal-header">
-              <h2 className="company-modal-title">Respond to Request</h2>
-              <button
-                onClick={() => setShowRequestModal(false)}
-                className="company-modal-close"
-              >
-                ×
-              </button>
-            </div>
-            <div className="company-modal-body">
-              <p>
-                <strong>Position:</strong> {selectedRequest.position}
-              </p>
-              <p>
-                <strong>University:</strong>{" "}
-                {selectedRequest.university?.user?.name}
-              </p>
-              <p>
-                <strong>Technology:</strong> {selectedRequest.technology}
-              </p>
-              <p>
-                <strong>Students:</strong> {selectedRequest.number_of_students}
-              </p>
-              <p>
-                <strong>Description:</strong> {selectedRequest.description}
-              </p>
-              <div className="company-profile-form-group">
-                <label className="company-profile-label">
-                  Response Message (optional)
-                </label>
-                <textarea
-                  value={responseText}
-                  onChange={(e) => setResponseText(e.target.value)}
-                  placeholder="Add a message to the university..."
-                  rows={4}
-                  className="company-profile-textarea"
-                />
-              </div>
-              <div className="modal-actions">
-                <button
-                  onClick={() => handleAcceptRequest(selectedRequest.id)}
-                  className="btn-accept"
-                >
-                  Accept Request
-                </button>
-                <button
-                  onClick={() => handleRejectRequest(selectedRequest.id)}
-                  className="btn-reject"
-                >
-                  Reject Request
-                </button>
-                <button
-                  onClick={() => {
-                    setShowRequestModal(false);
-                    setResponseText("");
-                  }}
-                  className="btn-cancel"
-                >
-                  Cancel
-                </button>
-              </div>
             </div>
           </div>
         </div>

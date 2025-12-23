@@ -1,334 +1,793 @@
-.seeker-profile-container {
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  min-height: 100vh;
-  background: #f3f2ef;
+/* ============================================
+   SEEKER PROFILE PAGE - PROFESSIONAL DESIGN
+   ============================================ */
+
+/* Import modern fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Root Variables - Warm Earthy Color Palette */
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+  
+  /* Warm Earthy Color Palette */
+  --color-primary: #D97757;
+  --color-primary-light: #E39979;
+  --color-primary-dark: #C45F3F;
+  --color-primary-glow: rgba(217, 119, 87, 0.15);
+  
+  --color-secondary: #C46851;
+  --color-accent: #E8945F;
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+  
+  /* Neutral Colors - Warm Tones */
+  --color-bg-primary: #FAF9F5;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #F0EDE6;
+  --color-text-primary: #2D2A26;
+  --color-text-secondary: #5A5550;
+  --color-text-muted: #8A857D;
+  --color-border: #E5E0D8;
+  --color-border-light: #F0EDE6;
+  
+  /* Shadows - Subtle and Warm */
+  --shadow-sm: 0 1px 2px 0 rgba(45, 42, 38, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(45, 42, 38, 0.08), 0 2px 4px -1px rgba(45, 42, 38, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(45, 42, 38, 0.08), 0 4px 6px -2px rgba(45, 42, 38, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(45, 42, 38, 0.08), 0 10px 10px -5px rgba(45, 42, 38, 0.03);
+  --shadow-glow: 0 0 20px var(--color-primary-glow);
+  
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Public Profile View Header */
+/* ============================================
+   BASE STYLES & ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* ============================================
+   PAGE LAYOUT
+   ============================================ */
+
+.seeker-profile-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #F0EDE6 0%, #FAF9F5 50%, #F5F2EB 100%);
+  background-attachment: fixed;
+  font-family: var(--font-primary);
+  position: relative;
+  overflow-x: hidden;
+}
+
+
+
+.seeker-profile-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle, rgba(217, 119, 87, 0.15) 2px, transparent 2px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.seeker-profile-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  min-height: calc(100vh - 80px);
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.6s var(--transition-base);
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+
+.seeker-profile-navbar {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--color-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+  animation: slideIn 0.4s var(--transition-base);
+}
+
+.seeker-profile-navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.seeker-profile-navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 0;
+}
+
+.seeker-profile-navbar-brand {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+  transition: transform var(--transition-base);
+}
+
+.seeker-profile-navbar-brand:hover {
+  transform: scale(1.05);
+}
+
+.seeker-profile-navbar-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.seeker-profile-nav-button {
+  padding: 0.625rem 1.5rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.seeker-profile-nav-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.seeker-profile-nav-button:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.seeker-profile-nav-button:hover::before {
+  left: 100%;
+}
+
+.seeker-profile-nav-button:active {
+  transform: translateY(0);
+}
+
+/* Menu Dropdown */
+.seeker-profile-menu-wrapper {
+  position: relative;
+}
+
+.seeker-profile-menu-button {
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-base);
+}
+
+.seeker-profile-menu-button:hover {
+  background: var(--color-border);
+  color: var(--color-text-primary);
+  transform: rotate(90deg);
+}
+
+.seeker-profile-dropdown {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  background: white;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  min-width: 180px;
+  overflow: hidden;
+  animation: scaleIn 0.2s var(--transition-base);
+  transform-origin: top right;
+}
+
+.seeker-profile-dropdown-item {
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border: none;
+  background: white;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.seeker-profile-dropdown-item:hover {
+  background: #fee;
+  color: var(--color-danger);
+  padding-left: 1.5rem;
+}
+
+.seeker-profile-dropdown-item svg {
+  flex-shrink: 0;
+  transition: transform var(--transition-base);
+}
+
+.seeker-profile-dropdown-item:hover svg {
+  transform: scale(1.1);
+}
+
+/* ============================================
+   PROFILE HEADER SECTION
+   ============================================ */
+
 .seeker-profile-header {
   background: white;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 0;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
+  animation: fadeIn 0.6s var(--transition-base) 0.1s backwards;
+  position: relative;
+  border: 1px solid var(--color-border-light);
 }
 
 .seeker-profile-banner {
-  height: 120px;
-  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-700) 100%);
+  height: 100px;
+  background: linear-gradient(135deg, #D97757 0%, #C45F3F 100%);
   position: relative;
+  overflow: hidden;
+}
+
+.seeker-profile-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%);
+  animation: float 6s ease-in-out infinite;
 }
 
 .seeker-profile-info-section {
-  padding: 0 1.5rem 1.5rem;
+  padding: 0 2rem 2rem;
   position: relative;
-  margin-top: -60px;
+  margin-top: -80px;
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   align-items: flex-start;
 }
 
 .seeker-profile-photo-wrapper {
   flex-shrink: 0;
+  position: relative;
+  animation: scaleIn 0.5s var(--transition-base) 0.3s backwards;
 }
 
 .seeker-profile-photo {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius-xl);
   object-fit: cover;
-  border: 4px solid white;
+  border: 5px solid white;
   background: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-xl);
   display: block;
+  transition: transform var(--transition-base);
+}
+
+.seeker-profile-photo:hover {
+  transform: scale(1.05);
 }
 
 .seeker-profile-photo-placeholder {
-  background: var(--color-primary-100);
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, #E39979 0%, #D97757 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: 700;
-  color: var(--color-primary-600);
+  color: white;
+  border: 5px solid white;
+  box-shadow: var(--shadow-xl);
 }
 
 .seeker-profile-details {
   flex-grow: 1;
-  padding-top: 60px;
+  padding-top: 80px;
+  animation: slideIn 0.6s var(--transition-base) 0.4s backwards;
 }
 
 .seeker-profile-name {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin: 0 0 0.25rem;
-  color: var(--color-slate-900);
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .seeker-profile-type {
-  color: var(--color-slate-600);
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
+  color: var(--color-text-secondary);
+  font-size: 1.0625rem;
+  margin-bottom: 1.25rem;
+  font-weight: 500;
+  display: inline-block;
+  padding: 0.375rem 1rem;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
 }
 
 .seeker-profile-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .seeker-profile-meta-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--color-slate-600);
-  font-size: 0.875rem;
+  gap: 0.75rem;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: color var(--transition-base);
+}
+
+.seeker-profile-meta-item:hover {
+  color: var(--color-primary);
 }
 
 .seeker-profile-icon {
-  width: 18px;
-  height: 18px;
-  color: var(--color-slate-500);
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
   flex-shrink: 0;
 }
 
 .seeker-profile-about-section {
-  padding: 1.5rem;
-  border-top: 1px solid var(--color-slate-200);
+  padding: 2rem;
+  border-top: 1px solid var(--color-border-light);
+  background: var(--color-bg-primary);
 }
 
 .seeker-profile-about-title {
-  font-size: 1rem;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: var(--color-slate-900);
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
 }
 
 .seeker-profile-about-text {
-  color: var(--color-slate-700);
-  line-height: 1.6;
-  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  font-size: 1rem;
   white-space: pre-wrap;
 }
 
-/* Projects Section - Public View */
+/* Skills Display in Header */
+.skills-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-top: 1rem;
+  animation: fadeIn 0.8s var(--transition-base) 0.5s backwards;
+}
+
+.skill-badge-display {
+  padding: 0.5rem 1rem;
+  background: white;
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 2px solid var(--color-primary);
+  transition: all var(--transition-base);
+  cursor: default;
+}
+
+.skill-badge-display:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background: var(--color-primary);
+  color: white;
+}
+
+/* ============================================
+   CARD STYLES
+   ============================================ */
+
+.seeker-profile-form-card,
 .seeker-profile-projects-card {
   background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
+  animation: fadeIn 0.6s var(--transition-base);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
 }
 
+.seeker-profile-form-card::before,
+.seeker-profile-projects-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-accent));
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+.seeker-profile-form-card:hover,
+.seeker-profile-projects-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.seeker-profile-form-title,
 .seeker-profile-projects-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
   margin-bottom: 1.5rem;
-  color: var(--color-slate-900);
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--color-slate-200);
-}
-
-.seeker-profile-projects-list {
+  color: var(--color-text-primary);
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-border-light);
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.seeker-profile-project-item {
-  padding: 1rem;
-  border: 1px solid var(--color-slate-200);
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-
-.seeker-profile-project-item:hover {
-  border-color: var(--color-primary-300);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.seeker-profile-project-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-slate-900);
-  margin-bottom: 0.5rem;
-}
-
-.seeker-profile-project-description {
-  color: var(--color-slate-700);
-  line-height: 1.5;
-  font-size: 0.9375rem;
-  margin-bottom: 0.75rem;
-}
-
-.seeker-profile-project-link {
-  color: var(--color-primary-600);
-  text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  transition: color 0.2s;
+  gap: 0.75rem;
 }
 
-.seeker-profile-project-link:hover {
-  color: var(--color-primary-700);
-  text-decoration: underline;
+.seeker-profile-form-title::before,
+.seeker-profile-projects-title::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
 }
 
-/* Form Section */
-.seeker-profile-form-card {
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.seeker-profile-form-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  color: var(--color-slate-900);
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--color-slate-200);
-}
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
 
 .seeker-profile-form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
-/* Enhanced Label Styling */
 .seeker-profile-label {
   display: block;
   font-weight: 600;
   font-size: 0.9375rem;
-  color: rgba(0, 0, 0, 0.9);
-  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+  margin-bottom: 0.625rem;
   letter-spacing: 0.01em;
   line-height: 1.5;
+}
+
+/* Enhanced Input/Textarea */
+.seeker-profile-input,
+.seeker-profile-textarea {
+  width: 100%;
+  padding: 0.875rem 1.125rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  transition: all var(--transition-base);
+  background: white;
+  line-height: 1.6;
+}
+
+.seeker-profile-input:focus,
+.seeker-profile-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-glow);
+  transform: translateY(-1px);
+}
+
+.seeker-profile-input::placeholder,
+.seeker-profile-textarea::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.seeker-profile-textarea {
+  resize: vertical;
+  min-height: 120px;
 }
 
 /* File Input Styling */
 .seeker-profile-file-input-group {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .seeker-profile-file-input {
   position: relative;
-  padding: 0.75rem 1rem;
-  border: 2px dashed var(--color-slate-300);
-  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
   font-size: 0.9375rem;
   cursor: pointer;
-  background: var(--color-slate-50);
-  color: var(--color-slate-700);
-  transition: all 0.2s;
-  font-family: var(--font-sans);
+  background: var(--color-bg-primary);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-base);
+  font-family: var(--font-primary);
 }
 
 .seeker-profile-file-input:hover {
-  border-color: var(--color-primary-500);
-  background: var(--color-primary-50);
-  color: var(--color-primary-700);
+  border-color: var(--color-primary);
+  background: white;
+  border-style: solid;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .seeker-profile-file-input:focus {
   outline: none;
-  border-color: var(--color-primary-600);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-glow);
 }
 
 .seeker-profile-file-input::file-selector-button {
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1.25rem;
   margin-right: 1rem;
-  background: var(--color-primary-600);
+  background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-full);
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
 }
 
 .seeker-profile-file-input::file-selector-button:hover {
-  background: var(--color-primary-700);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .seeker-profile-photo-preview-small {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: var(--radius-md);
   object-fit: cover;
-  border: 2px solid var(--color-slate-200);
+  border: 2px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-base);
 }
 
-/* Enhanced Input/Textarea Styling */
-.seeker-profile-input,
-.seeker-profile-textarea {
-  width: 100%;
-  padding: 0.75rem 0.875rem;
-  border: 1px solid var(--color-slate-300);
-  border-radius: 4px;
-  font-family: var(--font-sans);
-  font-size: 0.9375rem;
-  color: var(--color-slate-900);
-  transition: border-color 0.2s, box-shadow 0.2s;
+.seeker-profile-photo-preview-small:hover {
+  transform: scale(1.05);
+}
+
+/* Skills Selection */
+.skills-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border-light);
+}
+
+.skill-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.skill-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.skill-badge {
+  padding: 0.5rem 1rem;
   background: white;
-  line-height: 1.5;
+  color: var(--color-text-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all var(--transition-base);
+  cursor: pointer;
+  user-select: none;
 }
 
-.seeker-profile-input:focus,
-.seeker-profile-textarea:focus {
-  outline: none;
-  border-color: var(--color-primary-600);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.skill-checkbox input[type="checkbox"]:checked + .skill-badge {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
-.seeker-profile-input::placeholder,
-.seeker-profile-textarea::placeholder {
-  color: var(--color-slate-400);
-  opacity: 1;
+.skill-checkbox:hover .skill-badge {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-primary);
 }
 
-.seeker-profile-textarea {
-  resize: vertical;
-  min-height: 100px;
+.help-text {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-style: italic;
 }
 
-/* Button Styling */
+/* ============================================
+   BUTTONS
+   ============================================ */
+
 .seeker-profile-button {
-  padding: 0.75rem 1.5rem;
-  background: var(--color-primary-600);
+  padding: 0.875rem 2rem;
+  background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 24px;
-  font-weight: 600;
+  border-radius: var(--radius-full);
+  font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.seeker-profile-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
 }
 
 .seeker-profile-button:hover:not(:disabled) {
-  background: var(--color-primary-700);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.seeker-profile-button:hover:not(:disabled)::before {
+  width: 300px;
+  height: 300px;
+}
+
+.seeker-profile-button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .seeker-profile-button:disabled {
-  background: var(--color-slate-300);
+  background: var(--color-border);
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
+  opacity: 0.6;
+  color: var(--color-text-muted);
 }
 
 .seeker-profile-button-group {
@@ -338,55 +797,153 @@
 }
 
 .seeker-profile-button-secondary {
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 2rem;
   background: white;
-  color: var(--color-slate-700);
-  border: 1px solid var(--color-slate-300);
-  border-radius: 24px;
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
 }
 
 .seeker-profile-button-secondary:hover {
-  background: var(--color-slate-50);
-  border-color: var(--color-slate-400);
+  background: var(--color-bg-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-/* Project Management Section */
+.btn-primary {
+  padding: 0.625rem 1.25rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   PROJECTS SECTION
+   ============================================ */
+
+.seeker-profile-projects-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.seeker-profile-project-item {
+  padding: 1.5rem;
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.seeker-profile-project-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 0;
+  background: var(--color-primary);
+  transition: height var(--transition-base);
+}
+
+.seeker-profile-project-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.seeker-profile-project-item:hover::before {
+  height: 100%;
+}
+
+.seeker-profile-project-title {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.seeker-profile-project-description {
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  font-size: 0.9375rem;
+  margin-bottom: 1rem;
+}
+
+.seeker-profile-project-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-base);
+}
+
+.seeker-profile-project-link:hover {
+  color: var(--color-primary-dark);
+  gap: 0.75rem;
+}
+
+/* Project Management */
 .seeker-profile-projects-manage {
   margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--color-slate-200);
+  padding-top: 2rem;
+  border-top: 2px solid var(--color-border-light);
 }
 
 .seeker-profile-manage-title {
-  font-size: 1rem;
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: var(--color-slate-900);
+  color: var(--color-text-primary);
 }
 
 .seeker-profile-manage-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.875rem;
 }
 
 .seeker-profile-manage-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem;
-  background: var(--color-slate-50);
-  border: 1px solid var(--color-slate-200);
-  border-radius: 6px;
-  transition: all 0.2s;
+  padding: 1rem 1.25rem;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
 }
 
 .seeker-profile-manage-item:hover {
-  background: var(--color-slate-100);
+  background: white;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
 }
 
 .seeker-profile-manage-content {
@@ -395,132 +952,364 @@
 }
 
 .seeker-profile-manage-project-title {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: var(--color-slate-900);
+  color: var(--color-text-primary);
   margin-bottom: 0.25rem;
 }
 
 .seeker-profile-manage-link {
-  font-size: 0.8125rem;
-  color: var(--color-primary-600);
+  font-size: 0.875rem;
+  color: var(--color-primary);
   text-decoration: none;
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color var(--transition-base);
 }
 
 .seeker-profile-manage-link:hover {
+  color: var(--color-primary-dark);
   text-decoration: underline;
 }
 
 .seeker-profile-manage-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.625rem;
   margin-left: 1rem;
 }
 
 .seeker-profile-icon-button {
-  padding: 0.5rem;
+  padding: 0.625rem;
   background: white;
-  border: 1px solid var(--color-slate-300);
-  border-radius: 6px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .seeker-profile-icon-button-edit {
-  color: var(--color-primary-600);
+  color: var(--color-primary);
 }
 
 .seeker-profile-icon-button-edit:hover {
-  background: var(--color-primary-50);
-  border-color: var(--color-primary-600);
+  background: #FCE8E0;
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .seeker-profile-icon-button-delete {
-  color: var(--color-danger-600);
+  color: var(--color-danger);
 }
 
 .seeker-profile-icon-button-delete:hover {
-  background: var(--color-danger-50);
-  border-color: var(--color-danger-600);
+  background: #fee;
+  border-color: var(--color-danger);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-/* Success/Error Messages */
+/* ============================================
+   INTERNSHIPS SECTION
+   ============================================ */
+
+.seeker-internship-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.seeker-internship-item {
+  padding: 1.5rem;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border-light);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.seeker-internship-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--color-primary);
+  transform: scaleY(0);
+  transition: transform var(--transition-base);
+}
+
+.seeker-internship-item:hover {
+  background: white;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
+}
+
+.seeker-internship-item:hover::before {
+  transform: scaleY(1);
+}
+
+.seeker-internship-item strong {
+  color: var(--color-text-primary);
+  font-size: 1.125rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.seeker-internship-item > div:first-child > div {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  margin-bottom: 0.375rem;
+}
+
+.seeker-internship-item .muted {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ============================================
+   RATINGS SECTION
+   ============================================ */
+
+.seeker-ratings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.rating-card {
+  padding: 1.75rem;
+  background: white;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border-light);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.rating-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.rating-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.rating-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.rating-head strong {
+  color: var(--color-text-primary);
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.rating-score {
+  color: #d97706;
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  background: #fef3c7;
+  border-radius: var(--radius-full);
+  border: 2px solid #fbbf24;
+}
+
+.rating-comment {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--color-primary);
+  font-style: italic;
+}
+
+.rating-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.rating-date {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.badge-published {
+  padding: 0.375rem 0.875rem;
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border: 2px solid #059669;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   STATES & FEEDBACK
+   ============================================ */
+
+.empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: 3rem 2rem;
+  text-align: center;
+  font-size: 1rem;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  border: 2px dashed var(--color-border);
+}
+
 .seeker-profile-success {
-  background: var(--color-success-50);
-  color: var(--color-success-600);
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
+  background: #d1fae5;
+  color: #065f46;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
   margin-top: 1rem;
   text-align: center;
-  font-weight: 500;
-  border: 1px solid var(--color-success-600);
+  font-weight: 600;
+  border: 2px solid #059669;
+  animation: scaleIn 0.3s var(--transition-base);
+  box-shadow: var(--shadow-md);
 }
 
 .seeker-profile-error {
-  background: var(--color-danger-50);
-  color: var(--color-danger-600);
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
   margin-top: 1rem;
   text-align: center;
-  font-weight: 500;
-  border: 1px solid var(--color-danger-600);
+  font-weight: 600;
+  border: 2px solid #dc2626;
+  animation: scaleIn 0.3s var(--transition-base);
+  box-shadow: var(--shadow-md);
 }
 
-/* Loading State */
 .seeker-profile-loading {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  font-size: 1.125rem;
-  color: var(--color-slate-600);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Responsive Design */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .seeker-profile-projects-list {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .seeker-profile-container {
-    padding: 1rem 0.5rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .seeker-profile-navbar-brand {
+    font-size: 1.5rem;
+  }
+
+  .seeker-profile-navbar-actions {
+    gap: 0.5rem;
+  }
+
+  .seeker-profile-nav-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .seeker-profile-banner {
+    height: 75px;
   }
 
   .seeker-profile-info-section {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 0 1.5rem 1.5rem;
   }
 
   .seeker-profile-details {
     padding-top: 1rem;
   }
 
-  .seeker-profile-photo {
-    width: 100px;
-    height: 100px;
+  .seeker-profile-photo,
+  .seeker-profile-photo-placeholder {
+    width: 120px;
+    height: 120px;
   }
 
   .seeker-profile-name {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
   }
 
   .seeker-profile-meta {
     align-items: center;
   }
 
+  .seeker-profile-form-card,
+  .seeker-profile-projects-card {
+    padding: 1.5rem;
+  }
+
   .seeker-profile-button-group {
     flex-direction: column;
+  }
+
+  .seeker-profile-button,
+  .seeker-profile-button-secondary {
+    width: 100%;
   }
 
   .seeker-profile-manage-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: 1rem;
   }
 
   .seeker-profile-manage-actions {
@@ -528,269 +1317,49 @@
     width: 100%;
     justify-content: flex-end;
   }
-}
-.seeker-profile-page {
-  min-height: 100vh;
-  background: #f3f2ef;
-}
 
-/* Navbar */
-.seeker-profile-navbar {
-  background: white;
-  border-bottom: 1px solid var(--color-slate-200);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.seeker-profile-navbar-container {
-  /* max-width: 1200px; */
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.seeker-profile-navbar-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0;
-}
-
-.seeker-profile-navbar-brand {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-primary-600);
-  margin: 0;
-}
-
-.seeker-profile-navbar-actions {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.seeker-profile-nav-button {
-  padding: 0.5rem 1rem;
-  background: var(--color-primary-600);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.seeker-profile-nav-button:hover {
-  background: var(--color-primary-700);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Three-dot Menu */
-.seeker-profile-menu-wrapper {
-  position: relative;
-}
-
-.seeker-profile-menu-button {
-  width: 40px;
-  height: 40px;
-  border: none;
-  background: transparent;
-  color: var(--color-slate-600);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s;
-}
-
-.seeker-profile-menu-button:hover {
-  background: var(--color-slate-100);
-  color: var(--color-slate-900);
-}
-
-.seeker-profile-dropdown {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  background: white;
-  border: 1px solid var(--color-slate-200);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 160px;
-  overflow: hidden;
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+  .seeker-profile-projects-list {
+    grid-template-columns: 1fr;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .skills-display {
+    justify-content: center;
   }
 }
 
-.seeker-profile-dropdown-item {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: none;
-  background: white;
-  color: var(--color-slate-700);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  transition: all 0.2s;
-  text-align: left;
-}
+@media (max-width: 480px) {
+  .seeker-profile-name {
+    font-size: 1.5rem;
+  }
 
-.seeker-profile-dropdown-item:hover {
-  background: var(--color-slate-50);
-  color: var(--color-danger-600);
-}
+  .seeker-profile-form-title,
+  .seeker-profile-projects-title {
+    font-size: 1.25rem;
+  }
 
-.seeker-profile-dropdown-item svg {
-  flex-shrink: 0;
-}
-
-/* Adjust existing container */
-.seeker-profile-container {
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  min-height: calc(100vh - 70px);
-  background: #f3f2ef;
-}
-
-/* Responsive navbar */
-@media (max-width: 768px) {
-  .seeker-profile-navbar-actions {
+  .rating-head {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 0.5rem;
   }
 
-  .seeker-profile-nav-button {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8125rem;
+  .rating-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
 }
 
-/* Internships Section */
-.seeker-internship-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+/* ============================================
+   UTILITY ANIMATIONS
+   ============================================ */
 
-.seeker-internship-item {
-  padding: 16px;
-  background: #f9fafb;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
-}
-
-.seeker-internship-item strong {
-  color: #1f2937;
-  font-size: 16px;
-}
-
-.seeker-internship-item .muted {
-  color: #6b7280;
-  font-size: 14px;
-  margin-top: 4px;
-}
-
-/* Ratings Section */
-.seeker-ratings-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.rating-card {
-  padding: 16px;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.rating-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.rating-head strong {
-  color: #1f2937;
-  font-size: 16px;
-}
-
-.rating-score {
-  color: #f59e0b;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.rating-comment {
-  color: #4b5563;
-  font-size: 14px;
-  line-height: 1.5;
-  margin-bottom: 12px;
-  padding: 12px;
-  background: #f9fafb;
-  border-radius: 4px;
-  border-left: 3px solid #3b82f6;
-}
-
-.rating-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.rating-date {
-  color: #9ca3af;
-}
-
-.badge-published {
-  padding: 4px 12px;
-  background-color: #d1fae5;
-  color: #065f46;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-/* Empty state */
-.empty {
-  color: #9ca3af;
-  font-style: italic;
-  padding: 20px;
-  text-align: center;
-}
-
-/* Skills display in profile header */
-.skills-display {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.skill-badge-display {
-  padding: 4px 12px;
-  background-color: #e0e7ff;
-  color: #4338ca;
-  border-radius: 12px;
-  font-size: 13px;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

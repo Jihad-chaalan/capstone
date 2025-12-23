@@ -23,6 +23,7 @@ import AdminCompaniesPage from "../pages/AdminCompaniesPage";
 import AdminSkillsPage from "../pages/AdminSkillsPage";
 import CompanyPublicProfilePage from "../pages/CompanyPublicProfile";
 import SeekerPublicProfilePage from "../pages/SeekerPublicProfile";
+import CompanyRequestsPage from "../pages/CompanyRequestsPage";
 
 const ProtectedRoute = () => {
   const { token, user, fetchUser, isLoading } = useAuthStore();
@@ -77,6 +78,7 @@ export const AppRouter = () => {
             path="/university/requests"
             element={<UniversityRequestsPage />}
           />
+          <Route path="/company/requests" element={<CompanyRequestsPage />} />
         </Route>
         <Route
           path="/seeker/companies/:id"

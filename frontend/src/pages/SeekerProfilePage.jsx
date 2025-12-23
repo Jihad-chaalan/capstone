@@ -300,7 +300,7 @@ const SeekerProfilePage = () => {
       <nav className="seeker-profile-navbar">
         <div className="seeker-profile-navbar-container">
           <div className="seeker-profile-navbar-content">
-            <h1 className="seeker-profile-navbar-brand">Internship Portal</h1>
+            <h1 className="seeker-profile-navbar-brand">Int Leb Web</h1>
             <div className="seeker-profile-navbar-actions">
               <button
                 onClick={() => navigate("/posts")}
@@ -411,7 +411,7 @@ const SeekerProfilePage = () => {
             </div>
           </div>
           <div className="seeker-profile-about-section">
-            <h3 className="seeker-profile-about-title">About</h3>
+            <h3 className="seeker-profile-about-title">About me</h3>
             <p className="seeker-profile-about-text">
               {seekerData.description}
             </p>
@@ -581,7 +581,7 @@ const SeekerProfilePage = () => {
 
             <div className="seeker-profile-form-group">
               <label htmlFor="description" className="seeker-profile-label">
-                About
+                About Me
               </label>
               <textarea
                 id="description"

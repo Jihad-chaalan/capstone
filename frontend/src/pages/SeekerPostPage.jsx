@@ -112,25 +112,67 @@ const SeekerPostsPage = () => {
       <nav className="seeker-posts-navbar">
         <div className="seeker-posts-navbar-container">
           <div className="seeker-posts-navbar-content">
-            <h1 className="seeker-posts-navbar-brand">Internship Portal</h1>
+            <h1 className="seeker-posts-navbar-brand">Int Leb Web</h1>
             <div className="seeker-posts-navbar-actions">
               <button
                 onClick={() => navigate("/profile")}
                 className="seeker-posts-nav-button"
               >
-                My Profile
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                {/* My Profile */}
               </button>
               <button
                 onClick={() => navigate("/my-applications")}
                 className="seeker-posts-nav-button"
               >
-                My Applications
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                {/* My Applications */}
               </button>
               <button
                 onClick={handleLogout}
                 className="seeker-posts-nav-logout"
               >
-                Sign Out
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+                {/* Sign Out */}
               </button>
             </div>
           </div>
@@ -246,9 +288,7 @@ const SeekerPostsPage = () => {
                     </div>
                     {post.description && (
                       <p className="seeker-post-description">
-                        {post.description.length > 150
-                          ? `${post.description.substring(0, 150)}...`
-                          : post.description}
+                        {post.description}
                       </p>
                     )}
                     <div className="seeker-post-footer">

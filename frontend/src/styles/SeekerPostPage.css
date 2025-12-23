@@ -1,36 +1,215 @@
-.seeker-posts-page {
-  min-height: 100vh;
-  background: #f3f2ef;
+/* ============================================
+   SEEKER POSTS PAGE - REEL-STYLE DESIGN
+   ============================================ */
+
+/* Import modern fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Root Variables - Warm Earthy Color Palette */
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+  
+  /* Warm Earthy Color Palette */
+  --color-primary: #D97757;
+  --color-primary-light: #E39979;
+  --color-primary-dark: #C45F3F;
+  --color-primary-glow: rgba(217, 119, 87, 0.15);
+  
+  --color-secondary: #C46851;
+  --color-accent: #E8945F;
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+  
+  /* Neutral Colors - Warm Tones */
+  --color-bg-primary: #FAF9F5;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #F0EDE6;
+  --color-text-primary: #2D2A26;
+  --color-text-secondary: #5A5550;
+  --color-text-muted: #8A857D;
+  --color-border: #E5E0D8;
+  --color-border-light: #F0EDE6;
+  
+  /* Shadows - Subtle and Warm */
+  --shadow-sm: 0 1px 2px 0 rgba(45, 42, 38, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(45, 42, 38, 0.08), 0 2px 4px -1px rgba(45, 42, 38, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(45, 42, 38, 0.08), 0 4px 6px -2px rgba(45, 42, 38, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(45, 42, 38, 0.08), 0 10px 10px -5px rgba(45, 42, 38, 0.03);
+  --shadow-glow: 0 0 20px var(--color-primary-glow);
+  
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Navbar */
+/* ============================================
+   BASE STYLES & ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   PAGE LAYOUT
+   ============================================ */
+
+.seeker-posts-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #F0EDE6 0%, #FAF9F5 50%, #F5F2EB 100%);
+  background-attachment: fixed;
+  font-family: var(--font-primary);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.seeker-posts-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(217, 119, 87, 0.15) 2px, transparent 2px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.seeker-posts-page::after {
+  content: '';
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  right: -10%;
+  bottom: -10%;
+  background: 
+    radial-gradient(ellipse at 10% 20%, rgba(217, 119, 87, 0.05) 0%, transparent 40%),
+    radial-gradient(ellipse at 90% 70%, rgba(232, 148, 95, 0.04) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 90%, rgba(196, 104, 81, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+  animation: float 20s ease-in-out infinite;
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+
 .seeker-posts-navbar {
-  background: white;
-  border-bottom: 1px solid var(--color-slate-200);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--color-border-light);
   position: sticky;
   top: 0;
-  z-index: 100;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+  animation: slideIn 0.4s var(--transition-base);
 }
 
 .seeker-posts-navbar-container {
-  /* max-width: 1200px; */
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
 }
 
 .seeker-posts-navbar-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
+  padding: 1.25rem 0;
 }
 
 .seeker-posts-navbar-brand {
-  font-size: 1.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-primary-600);
+  color: var(--color-primary);
   margin: 0;
+  letter-spacing: -0.02em;
+  transition: transform var(--transition-base);
+}
+
+.seeker-posts-navbar-brand:hover {
+  transform: scale(1.05);
 }
 
 .seeker-posts-navbar-actions {
@@ -40,190 +219,381 @@
 }
 
 .seeker-posts-nav-button {
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1.25rem;
   background: white;
-  color: var(--color-slate-700);
-  border: 1px solid var(--color-slate-300);
-  border-radius: 6px;
-  font-weight: 500;
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
 }
 
 .seeker-posts-nav-button:hover {
-  background: var(--color-slate-50);
-  border-color: var(--color-slate-400);
+  background: var(--color-bg-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .seeker-posts-nav-logout {
-  padding: 0.5rem 1rem;
-  background: var(--color-danger-600);
+  padding: 0.625rem 1.25rem;
+  background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-weight: 500;
+  border-radius: var(--radius-full);
+  font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.seeker-posts-nav-logout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
 }
 
 .seeker-posts-nav-logout:hover {
-  background: var(--color-danger-700);
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
-/* Main Container */
+.seeker-posts-nav-logout:hover::before {
+  left: 100%;
+}
+
+/* ============================================
+   MAIN CONTAINER
+   ============================================ */
+
 .seeker-posts-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2.5rem 1.5rem;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.6s var(--transition-base);
 }
 
-/* Header */
+/* ============================================
+   HEADER SECTION
+   ============================================ */
+
 .seeker-posts-header {
-  margin-bottom: 2rem;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  animation: fadeIn 0.6s var(--transition-base) 0.1s backwards;
 }
 
 .seeker-posts-title {
-  font-size: 2rem;
+  font-family: var(--font-heading);
+  font-size: 3rem;
   font-weight: 700;
-  color: var(--color-slate-900);
-  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .seeker-posts-subtitle {
-  font-size: 1rem;
-  color: var(--color-slate-600);
+  font-size: 1.25rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 500;
 }
 
-/* Filter Card */
+/* ============================================
+   FILTER CARD
+   ============================================ */
+
 .seeker-posts-filter-card {
   background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border-light);
+  animation: fadeIn 0.6s var(--transition-base) 0.2s backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.seeker-posts-filter-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-accent));
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
 }
 
 .seeker-posts-filter-form {
   display: grid;
   grid-template-columns: 1fr 1fr auto;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: end;
 }
 
 .seeker-posts-filter-group {
   display: flex;
   flex-direction: column;
+  gap: 0.625rem;
 }
 
 .seeker-posts-filter-label {
   font-weight: 600;
-  font-size: 0.875rem;
-  color: var(--color-slate-700);
-  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--color-text-primary);
+  letter-spacing: 0.01em;
 }
 
 .seeker-posts-filter-input {
-  padding: 0.75rem;
-  border: 1px solid var(--color-slate-300);
-  border-radius: 6px;
-  font-size: 0.9375rem;
-  transition: all 0.2s;
+  padding: 0.875rem 1.125rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  transition: all var(--transition-base);
+  background: white;
 }
 
 .seeker-posts-filter-input:focus {
   outline: none;
-  border-color: var(--color-primary-600);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-glow);
+  transform: translateY(-1px);
+}
+
+.seeker-posts-filter-input::placeholder {
+  color: var(--color-text-muted);
 }
 
 .seeker-posts-filter-button {
-  padding: 0.75rem 2rem;
-  background: var(--color-primary-600);
+  padding: 0.875rem 2rem;
+  background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.9375rem;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.seeker-posts-filter-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
 }
 
 .seeker-posts-filter-button:hover {
-  background: var(--color-primary-700);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
-/* Posts Grid */
+.seeker-posts-filter-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.seeker-posts-filter-button:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   POSTS GRID - REEL STYLE
+   ============================================ */
+
 .seeker-posts-grid {
   display: grid;
-  /* grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); */
-  gap: 1.5rem;
+  /* grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); */
+  gap: 2rem;
+  animation: fadeIn 0.6s var(--transition-base) 0.3s backwards;
 }
 
-/* Post Card */
+/* ============================================
+   POST CARD - REEL DESIGN
+   ============================================ */
+
 .seeker-post-card {
   background: white;
-  border-radius: 8px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border-light);
+  transition: all var(--transition-slow);
   display: flex;
   flex-direction: column;
+  position: relative;
+  height: 550px;
+}
+
+.seeker-post-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 0%, transparent 40%, rgba(45, 42, 38, 0.95) 100%);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .seeker-post-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-xl), 0 0 0 3px var(--color-primary-glow);
 }
 
+.seeker-post-card:hover::before {
+  opacity: 1;
+}
+
+/* Photo as full background */
 .seeker-post-photo {
   width: 100%;
-  height: 400px;
-  object-fit: cover;
+  height: 100%;
+  /* object-fit: cover; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(135deg, #F0EDE6 0%, #E5E0D8 100%);
+  transition: transform var(--transition-slow);
 }
 
+.seeker-post-card:hover .seeker-post-photo {
+  transform: scale(1.1);
+}
+
+/* Content overlay */
 .seeker-post-content {
-  padding: 1.25rem;
+  position: relative;
+  z-index: 2;
+  padding: 1.75rem;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  justify-content: space-between;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(45, 42, 38, 0.4) 0%, rgba(45, 42, 38, 0.7) 50%, rgba(45, 42, 38, 0.95) 100%);
 }
 
+/* Company badge at top */
 .seeker-post-company {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-primary-600);
-  margin-bottom: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-full);
+  align-self: flex-start;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+  border: 2px solid var(--color-primary);
+}
+
+.seeker-post-company::before {
+  content: '🏢';
+  font-size: 1rem;
+}
+
+.seeker-post-company:hover {
+  background: var(--color-primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Bottom content area */
+.seeker-post-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: auto;
 }
 
 .seeker-post-position {
-  font-size: 1.25rem;
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-slate-900);
-  margin-bottom: 0.5rem;
+  color: white;
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .seeker-post-technology {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background: var(--color-primary-50);
-  color: var(--color-primary-700);
-  border-radius: 12px;
-  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: rgba(217, 119, 87, 0.95);
+  backdrop-filter: blur(10px);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  align-self: flex-start;
+  box-shadow: var(--shadow-md);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.seeker-post-technology::before {
+  content: '💻';
+  margin-right: 0.5rem;
 }
 
 .seeker-post-description {
-  color: var(--color-slate-700);
+  color: rgba(255, 255, 255, 0.95);
   line-height: 1.6;
   font-size: 0.9375rem;
-  margin-bottom: 1rem;
-  flex: 1;
+  margin: 0;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all var(--transition-base);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.seeker-post-card:hover .seeker-post-description {
+  opacity: 1;
+  max-height: 100px;
+  margin-top: 0.75rem;
 }
 
 .seeker-post-footer {
@@ -231,117 +601,272 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 1rem;
-  border-top: 1px solid var(--color-slate-200);
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  margin-top: 0.75rem;
 }
 
 .seeker-post-date {
   font-size: 0.8125rem;
-  color: var(--color-slate-500);
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.seeker-post-date::before {
+  content: '📅';
 }
 
 .seeker-post-button {
-  padding: 0.5rem 1.25rem;
-  background: var(--color-primary-600);
-  color: white;
+  padding: 0.875rem 1.75rem;
+  background: white;
+  color: var(--color-primary);
   border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.875rem;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.9375rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--color-primary);
+}
+
+.seeker-post-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  z-index: -1;
 }
 
 .seeker-post-button:hover:not(:disabled) {
-  background: var(--color-primary-700);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: white;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-xl);
+}
+
+.seeker-post-button:hover:not(:disabled)::before {
+  width: 300px;
+  height: 300px;
+}
+
+.seeker-post-button:active:not(:disabled) {
+  transform: translateY(0) scale(1);
 }
 
 .seeker-post-button:disabled {
-  opacity: 0.6;
+  background: var(--color-border);
+  color: var(--color-text-muted);
   cursor: not-allowed;
-  transform: none;
+  opacity: 0.6;
+  border-color: var(--color-border);
 }
 
 .seeker-post-button-applied {
-  padding: 0.5rem 1.25rem;
-  background: var(--color-success-50);
-  color: var(--color-success-700);
-  border: 1px solid var(--color-success-600);
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: not-allowed;
+  padding: 0.875rem 1.75rem;
+  background: var(--color-success);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  cursor: default;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Empty State */
+/* .seeker-post-button-applied::before {
+  content: '✓';
+  font-size: 1.25rem;
+} */
+
+/* ============================================
+   EMPTY & ERROR STATES
+   ============================================ */
+
 .seeker-posts-empty {
-  text-align: center;
-  padding: 4rem 2rem;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  border: 2px dashed var(--color-border);
+  animation: fadeIn 0.6s var(--transition-base) 0.3s backwards;
 }
 
 .seeker-posts-empty-icon {
-  width: 64px;
-  height: 64px;
-  color: var(--color-slate-400);
-  margin: 0 auto 1rem;
+  width: 80px;
+  height: 80px;
+  color: var(--color-text-muted);
+  margin: 0 auto 1.5rem;
+  opacity: 0.5;
 }
 
 .seeker-posts-empty-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-slate-900);
-  margin-bottom: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 0.75rem;
 }
 
 .seeker-posts-empty-text {
-  color: var(--color-slate-600);
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0;
 }
 
-/* Error State */
 .seeker-posts-error {
-  background: var(--color-danger-50);
-  color: var(--color-danger-700);
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--color-danger-600);
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
   text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  border: 2px solid #dc2626;
+  animation: scaleIn 0.3s var(--transition-base);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
 }
 
-/* Loading State */
 .seeker-posts-loading {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  font-size: 1.125rem;
-  color: var(--color-slate-600);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background: var(--color-bg-primary);
 }
 
-/* Responsive Design */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .seeker-posts-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .seeker-post-card {
+    height: 500px;
+  }
+}
+
 @media (max-width: 768px) {
+  .seeker-posts-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .seeker-posts-title {
+    font-size: 2.25rem;
+  }
+
+  .seeker-posts-subtitle {
+    font-size: 1.125rem;
+  }
+
+  .seeker-posts-navbar-brand {
+    font-size: 1.5rem;
+  }
+
   .seeker-posts-navbar-actions {
     gap: 0.5rem;
   }
 
   .seeker-posts-nav-button,
   .seeker-posts-nav-logout {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0.875rem;
     font-size: 0.8125rem;
-  }
-
-  .seeker-posts-title {
-    font-size: 1.5rem;
   }
 
   .seeker-posts-filter-form {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .seeker-posts-filter-button {
+    width: 100%;
   }
 
   .seeker-posts-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .seeker-post-card {
+    height: 480px;
+  }
+
+  .seeker-post-content {
+    padding: 1.5rem;
+  }
+
+  .seeker-post-position {
+    font-size: 1.5rem;
+  }
+
+  .seeker-post-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .seeker-post-button,
+  .seeker-post-button-applied {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .seeker-posts-title {
+    font-size: 1.875rem;
+  }
+
+  .seeker-posts-subtitle {
+    font-size: 1rem;
+  }
+
+  .seeker-posts-filter-card {
+    padding: 1.5rem;
+  }
+  
+  .seeker-post-card {
+    height: 450px;
+  }
+
+  .seeker-post-position {
+    font-size: 1.375rem;
+  }
+}
+
+/* ============================================
+   UTILITY ANIMATIONS
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

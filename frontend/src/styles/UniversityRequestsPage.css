@@ -1,15 +1,87 @@
-.uni-req-page {
-  min-height: 100vh;
-  background: #f3f2ef;
+/* ===========================
+   WARM COLOR SCHEME VARIABLES
+   =========================== */
+:root {
+  /* Primary Coral Colors */
+  --primary-color: #D97757;
+  --primary-light: #E39979;
+  --primary-dark: #C45F3F;
+  --primary-glow: rgba(217, 119, 87, 0.15);
+  
+  /* Background Colors */
+  --bg-primary: #FAF9F5;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #F0EDE6;
+  --bg-hover: #FCF8F3;
+  
+  /* Text Colors */
+  --text-primary: #2D2A26;
+  --text-secondary: #5A5550;
+  --text-tertiary: #8A857D;
+  
+  /* Status Colors */
+  --status-pending: #F5A623;
+  --status-pending-bg: #FFF8E6;
+  --status-accepted: #4CAF50;
+  --status-accepted-bg: #E8F5E9;
+  --status-rejected: #E74C3C;
+  --status-rejected-bg: #FFEBEE;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(217, 119, 87, 0.08);
+  --shadow-md: 0 4px 12px rgba(217, 119, 87, 0.12);
+  --shadow-lg: 0 8px 24px rgba(217, 119, 87, 0.15);
+  --shadow-xl: 0 12px 32px rgba(217, 119, 87, 0.18);
+  
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ===========================
+   BASE PAGE STYLES
+   =========================== */
+.uni-req-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+  position: relative;
+}
+
+/* Dotted background pattern */
+.uni-req-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle, var(--primary-glow) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===========================
+   NAVBAR STYLES
+   =========================== */
 .uni-req-navbar {
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(217, 119, 87, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .uni-req-navbar-content {
@@ -21,11 +93,37 @@
   align-items: center;
 }
 
+.uni-req-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--bg-secondary);
+  color: var(--primary-color);
+  border: 1px solid rgba(217, 119, 87, 0.2);
+  border-radius: var(--radius-full);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+
+.uni-req-back-button:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateX(-2px);
+  box-shadow: var(--shadow-md);
+}
+
 .uni-req-navbar-title {
-  font-size: 1.25rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.35rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .uni-req-navbar-actions {
@@ -39,321 +137,591 @@
 }
 
 .uni-req-menu-button {
-  background: none;
-  border: none;
+  background: var(--bg-secondary);
+  border: 1px solid rgba(217, 119, 87, 0.2);
+  border-radius: var(--radius-full);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.5rem;
   cursor: pointer;
-  padding: 0.5rem;
-  color: #666;
+  padding: 0;
+  color: var(--text-secondary);
+  transition: all var(--transition-base);
 }
 
 .uni-req-menu-button:hover {
-  color: #0073b1;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .uni-req-dropdown {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 0.5rem);
   right: 0;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 150px;
+  background: var(--bg-secondary);
+  border: 1px solid rgba(217, 119, 87, 0.15);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  min-width: 180px;
   z-index: 1000;
-  margin-top: 0.5rem;
+  overflow: hidden;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .uni-req-dropdown-item {
   display: block;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1.25rem;
   border: none;
   background: none;
   text-align: left;
   cursor: pointer;
-  font-size: 0.9rem;
-  color: #333;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: background var(--transition-fast);
 }
 
 .uni-req-dropdown-item:hover {
-  background: #f3f2ef;
+  background: var(--bg-hover);
+  color: var(--primary-color);
 }
 
+/* ===========================
+   CONTAINER & HEADER
+   =========================== */
 .uni-req-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2.5rem 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .uni-req-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .uni-req-header h1 {
-  font-size: 2rem;
-  color: #333;
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
+/* ===========================
+   BUTTON STYLES
+   =========================== */
 .uni-req-btn-primary {
-  background: #0073b1;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 24px;
+  padding: 0.875rem 2rem;
+  border-radius: var(--radius-full);
   font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.uni-req-btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
 }
 
 .uni-req-btn-primary:hover {
-  background: #005582;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.uni-req-btn-primary:hover::before {
+  left: 100%;
+}
+
+.uni-req-btn-primary:active {
+  transform: translateY(0);
 }
 
 .uni-req-btn-secondary {
-  background: white;
-  color: #0073b1;
-  border: 1px solid #0073b1;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
+  background: var(--bg-secondary);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius-full);
   font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all var(--transition-base);
 }
 
 .uni-req-btn-secondary:hover {
-  background: #f3f2ef;
+  background: var(--primary-color);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
+/* ===========================
+   FORM CARD STYLES
+   =========================== */
 .uni-req-form-card {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2.5rem;
+  border-top: 4px solid;
+  border-image: linear-gradient(90deg, var(--primary-color), var(--primary-light)) 1;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .uni-req-form-card h2 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  color: #333;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 1.75rem 0;
+  letter-spacing: -0.01em;
 }
 
 .uni-req-form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .uni-req-form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.625rem;
   font-weight: 600;
-  color: #333;
+  font-size: 0.95rem;
+  color: var(--text-primary);
 }
 
 .uni-req-input,
-.uni-req-textarea {
+.uni-req-textarea,
+.uni-req-select {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 0.875rem 1rem;
+  border: 2px solid rgba(217, 119, 87, 0.2);
+  border-radius: var(--radius-sm);
   font-size: 1rem;
-  font-family: inherit;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  transition: all var(--transition-base);
 }
 
 .uni-req-input:focus,
-.uni-req-textarea:focus {
+.uni-req-textarea:focus,
+.uni-req-select:focus {
   outline: none;
-  border-color: #0073b1;
+  border-color: var(--primary-color);
+  background: var(--bg-secondary);
+  box-shadow: 0 0 0 4px var(--primary-glow);
 }
 
 .uni-req-textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
+  line-height: 1.6;
 }
 
+.uni-req-input::placeholder,
+.uni-req-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ===========================
+   REQUESTS LIST
+   =========================== */
 .uni-req-list {
-  margin-top: 2rem;
+  margin-top: 2.5rem;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .uni-req-list h2 {
-  font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1.75rem;
+  letter-spacing: -0.01em;
 }
 
 .uni-req-empty {
   text-align: center;
-  color: #666;
-  padding: 3rem;
-  background: white;
-  border-radius: 12px;
+  color: var(--text-secondary);
+  padding: 4rem 2rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
+.uni-req-empty p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* ===========================
+   REQUEST CARDS GRID
+   =========================== */
 .uni-req-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.75rem;
 }
 
 .uni-req-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  border-top: 3px solid transparent;
+  transition: all var(--transition-base);
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .uni-req-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+  border-top-color: var(--primary-color);
 }
 
 .uni-req-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: start;
-  margin-bottom: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
   gap: 1rem;
 }
 
 .uni-req-card-header h3 {
+  font-family: 'Poppins', sans-serif;
   margin: 0;
-  color: #0073b1;
+  color: var(--primary-color);
   font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+  flex: 1;
 }
 
+/* ===========================
+   STATUS BADGES
+   =========================== */
 .uni-req-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
+  padding: 0.375rem 0.875rem;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .uni-req-badge-pending {
-  background: #fff4e5;
-  color: #cc7700;
+  background: var(--status-pending-bg);
+  color: var(--status-pending);
+  border: 1px solid var(--status-pending);
 }
 
 .uni-req-badge-accepted {
-  background: #e7f7e7;
-  color: #057e05;
+  background: var(--status-accepted-bg);
+  color: var(--status-accepted);
+  border: 1px solid var(--status-accepted);
 }
 
 .uni-req-badge-rejected {
-  background: #ffe5e5;
-  color: #cc0000;
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected);
+  border: 1px solid var(--status-rejected);
 }
 
+/* ===========================
+   CARD BODY CONTENT
+   =========================== */
 .uni-req-card-body p {
-  margin: 0.5rem 0;
-  color: #666;
+  margin: 0.625rem 0;
+  color: var(--text-secondary);
   font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.uni-req-card-body strong {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 .uni-req-company,
 .uni-req-tech,
 .uni-req-students {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+}
+
+.uni-req-tech {
+  color: var(--primary-dark);
+  font-weight: 500;
 }
 
 .uni-req-description {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
-  line-height: 1.6;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 2px solid var(--bg-tertiary);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
 }
 
 .uni-req-response {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #f3f2ef;
-  border-radius: 8px;
-  border-left: 3px solid #0073b1;
+  margin-top: 1.25rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-hover));
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--primary-color);
 }
 
 .uni-req-response strong {
   display: block;
-  margin-bottom: 0.5rem;
-  color: #333;
+  margin-bottom: 0.625rem;
+  color: var(--primary-dark);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.uni-req-response p {
+  margin: 0;
+  color: var(--text-primary);
+  line-height: 1.6;
 }
 
 .uni-req-date {
   font-size: 0.85rem;
-  color: #999;
-  margin-top: 1rem;
+  color: var(--text-tertiary);
+  margin-top: 1.25rem;
+  font-style: italic;
 }
 
+/* ===========================
+   CARD ACTIONS
+   =========================== */
 .uni-req-card-actions {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--bg-tertiary);
 }
 
 .uni-req-btn-edit,
 .uni-req-btn-delete {
   flex: 1;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.25rem;
   border: none;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all var(--transition-base);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .uni-req-btn-edit {
-  background: #0073b1;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
   color: white;
+  box-shadow: var(--shadow-sm);
 }
 
 .uni-req-btn-edit:hover {
-  background: #005582;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .uni-req-btn-delete {
-  background: #dc3545;
-  color: white;
+  background: var(--bg-secondary);
+  color: var(--status-rejected);
+  border: 2px solid var(--status-rejected);
 }
 
 .uni-req-btn-delete:hover {
-  background: #c82333;
+  background: var(--status-rejected);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
+/* ===========================
+   LOADING STATE
+   =========================== */
 .uni-req-loading {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   font-size: 1.25rem;
-  color: #666;
+  color: var(--text-secondary);
+  gap: 1rem;
+}
+
+.uni-req-loading::after {
+  content: '';
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--bg-tertiary);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===========================
+   RESPONSIVE DESIGN
+   =========================== */
+@media (max-width: 1024px) {
+  .uni-req-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
   .uni-req-navbar-content {
     padding: 1rem;
   }
+  
+  .uni-req-navbar-title {
+    font-size: 1.15rem;
+  }
+  
+  .uni-req-back-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
 
   .uni-req-container {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .uni-req-header {
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
     align-items: stretch;
+  }
+  
+  .uni-req-header h1 {
+    font-size: 1.75rem;
   }
 
   .uni-req-grid {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
-
-  .uni-req-navbar-actions {
+  
+  .uni-req-form-card {
+    padding: 1.75rem 1.25rem;
+  }
+  
+  .uni-req-card {
+    padding: 1.5rem;
+  }
+  
+  .uni-req-card-actions {
     flex-direction: column;
-    gap: 0.5rem;
+  }
+  
+  .uni-req-btn-edit,
+  .uni-req-btn-delete {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .uni-req-navbar-content {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .uni-req-navbar-actions {
+    justify-content: space-between;
+  }
+  
+  .uni-req-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .uni-req-btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .uni-req-form-card {
+    padding: 1.5rem 1rem;
+  }
+  
+  .uni-req-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .uni-req-badge {
+    align-self: flex-start;
   }
 }

@@ -1,32 +1,323 @@
-.university-profile-container {
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  min-height: 100vh;
-  background: #f3f2ef;
+/* ========================================
+   CSS VARIABLES & FONTS
+======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Colors */
+  --primary-color: #D97757;
+  --primary-light: #E39979;
+  --primary-dark: #C45F3F;
+  --primary-glow: rgba(217, 119, 87, 0.15);
+  
+  --bg-primary: #FAF9F5;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #F0EDE6;
+  --bg-hover: #FCF8F3;
+  
+  --text-primary: #2D2A26;
+  --text-secondary: #5A5550;
+  --text-tertiary: #8A857D;
+  
+  --border-color: #E5E0D8;
+  --border-light: #F0EDE6;
+  
+  --success-color: #10b981;
+  --success-light: #d1fae5;
+  --danger-color: #ef4444;
+  --danger-light: #fee2e2;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(45, 42, 38, 0.04);
+  --shadow-md: 0 4px 16px rgba(45, 42, 38, 0.08);
+  --shadow-lg: 0 8px 24px rgba(45, 42, 38, 0.12);
+  --shadow-xl: 0 12px 32px rgba(45, 42, 38, 0.16);
+  
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Poppins', system-ui, sans-serif;
 }
 
-/* Public Profile View Header */
-.university-profile-header {
-  background: white;
-  border-radius: 8px;
+/* ========================================
+   ANIMATIONS
+======================================== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========================================
+   PAGE LAYOUT
+======================================== */
+.university-profile-container {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  position: relative;
   padding: 0;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
+  font-family: var(--font-sans);
+  animation: fadeIn var(--transition-base);
+}
+
+.university-profile-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(
+    circle,
+    rgba(217, 119, 87, 0.15) 2px,
+    transparent 2px
+  );
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.university-profile-loading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+}
+
+/* ========================================
+   NAVBAR
+======================================== */
+.university-profile-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 249, 245, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  animation: fadeIn var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.university-profile-navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.university-profile-navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+}
+
+.university-profile-navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--primary-color);
+  margin: 0;
+  cursor: pointer;
+  transition: color var(--transition-base);
+}
+
+.university-profile-navbar-brand:hover {
+  color: var(--primary-dark);
+}
+
+.university-profile-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.university-profile-nav-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-family: var(--font-sans);
+}
+
+.university-profile-nav-button:hover {
+  background: var(--bg-hover);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.university-profile-nav-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.university-profile-nav-logout:hover {
+  background: linear-gradient(135deg, #ee5a6f, #d63447);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(238, 90, 111, 0.3);
+}
+
+/* Responsive Navbar */
+@media (max-width: 768px) {
+  .university-profile-navbar-content {
+    height: 60px;
+  }
+  
+  .university-profile-navbar-brand {
+    font-size: 1.25rem;
+  }
+  
+  .university-profile-nav-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .university-profile-nav-button span {
+    display: none;
+  }
+  
+  .university-profile-nav-button svg {
+    margin: 0;
+  }
+  
+  .university-profile-nav-logout {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .university-profile-navbar-actions {
+    gap: 0.5rem;
+  }
+  
+  .university-profile-nav-button {
+    padding: 0.5rem;
+  }
+}
+
+/* ========================================
+   PROFILE HEADER
+======================================== */
+.university-profile-header {
+  position: relative;
+  z-index: 1;
+  background: var(--bg-secondary);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
   overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  max-width: 1500px;
+  margin: 0 auto;
+  animation: slideUp var(--transition-slow);
 }
 
 .university-profile-banner {
-  height: 120px;
-  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-700) 100%);
+  height: 200px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 50%, #F4B088 100%);
   position: relative;
 }
 
+.university-profile-banner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.university-profile-btn-requests {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  color: var(--text-primary);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-family: var(--font-sans);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.university-profile-btn-requests:hover {
+  background: white;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
 .university-profile-info-section {
-  padding: 0 1.5rem 1.5rem;
+  padding: 0 2rem 2rem;
   position: relative;
-  margin-top: -60px;
+  margin-top: -80px;
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   align-items: flex-start;
 }
 
@@ -35,353 +326,420 @@
 }
 
 .university-profile-logo {
-  width: 120px;
-  height: 120px;
-  border-radius: 8px;
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius-lg);
   object-fit: cover;
   border: 4px solid white;
   background: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   display: block;
+  transition: all var(--transition-base);
+}
+
+.university-profile-logo:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-xl);
 }
 
 .university-profile-logo-placeholder {
-  background: var(--color-primary-100);
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 4rem;
   font-weight: 700;
-  color: var(--color-primary-600);
+  color: white;
+  border: 4px solid white;
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-display);
 }
 
 .university-profile-details {
   flex-grow: 1;
-  padding-top: 60px;
+  padding-top: 80px;
 }
 
 .university-profile-name {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin: 0 0 0.25rem;
-  color: var(--color-slate-900);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
 }
 
 .university-profile-type {
-  color: var(--color-slate-600);
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
+  color: var(--text-tertiary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
 }
 
 .university-profile-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .university-profile-meta-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--color-slate-600);
-  font-size: 0.875rem;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.university-profile-meta-item:hover {
+  background: var(--bg-hover);
 }
 
 .university-profile-icon {
-  width: 18px;
-  height: 18px;
-  color: var(--color-slate-500);
+  width: 20px;
+  height: 20px;
+  color: var(--primary-color);
   flex-shrink: 0;
 }
 
 .university-profile-link {
-  color: var(--color-primary-600);
+  color: var(--primary-color);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color var(--transition-base);
+  font-weight: 500;
 }
 
 .university-profile-link:hover {
-  color: var(--color-primary-700);
+  color: var(--primary-dark);
   text-decoration: underline;
 }
 
 .university-profile-about-section {
-  padding: 1.5rem;
-  border-top: 1px solid var(--color-slate-200);
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--border-light);
 }
 
 .university-profile-about-title {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.125rem;
+  font-weight: 700;
   margin-bottom: 0.75rem;
-  color: var(--color-slate-900);
+  color: var(--text-primary);
+  font-family: var(--font-display);
 }
 
 .university-profile-about-text {
-  color: var(--color-slate-700);
-  line-height: 1.6;
+  color: var(--text-secondary);
+  line-height: 1.8;
   font-size: 0.9375rem;
   white-space: pre-wrap;
 }
 
-/* Form Section */
+/* ========================================
+   FORM SECTION
+======================================== */
 .university-profile-form-card {
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1500px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-light);
+  border-top: 4px solid;
+  border-image: linear-gradient(90deg, var(--primary-color), var(--primary-light)) 1;
+  animation: slideUp var(--transition-slow) 0.2s;
 }
 
 .university-profile-form-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
   margin-bottom: 1.5rem;
-  color: var(--color-slate-900);
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--color-slate-200);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-light);
+  letter-spacing: -0.01em;
 }
 
 .university-profile-form-group {
   margin-bottom: 1.5rem;
 }
 
-/* Enhanced Label Styling */
 .university-profile-label {
   display: block;
   font-weight: 600;
   font-size: 0.9375rem;
-  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
-  letter-spacing: 0.01em;
-  line-height: 1.5;
+  font-family: var(--font-sans);
 }
 
-/* File Input Styling */
+/* File Input */
 .university-profile-file-input-group {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .university-profile-file-input {
   position: relative;
-  padding: 0.75rem 1rem;
-  border: 2px dashed var(--color-slate-300);
-  border-radius: 8px;
+  padding: 0.875rem 1rem;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
   font-size: 0.9375rem;
   cursor: pointer;
-  background: var(--color-slate-50);
-  color: var(--color-slate-700);
-  transition: all 0.2s;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  transition: all var(--transition-base);
   font-family: var(--font-sans);
 }
 
 .university-profile-file-input:hover {
-  border-color: var(--color-primary-500);
-  background: var(--color-primary-50);
-  color: var(--color-primary-700);
+  border-color: var(--primary-color);
+  background: rgba(217, 119, 87, 0.05);
+  color: var(--primary-color);
 }
 
 .university-profile-file-input:focus {
   outline: none;
-  border-color: var(--color-primary-600);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
 .university-profile-file-input::file-selector-button {
   padding: 0.5rem 1rem;
   margin-right: 1rem;
-  background: var(--color-primary-600);
+  background: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
 }
 
 .university-profile-file-input::file-selector-button:hover {
-  background: var(--color-primary-700);
+  background: var(--primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(217, 119, 87, 0.2);
 }
 
 .university-profile-logo-preview {
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-lg);
   object-fit: cover;
-  border: 2px solid var(--color-slate-200);
+  border: 3px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Enhanced Input/Textarea Styling */
+/* Input & Textarea */
 .university-profile-input,
 .university-profile-textarea {
   width: 100%;
-  padding: 0.75rem 0.875rem;
-  border: 1px solid var(--color-slate-300);
-  border-radius: 4px;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
   font-family: var(--font-sans);
   font-size: 0.9375rem;
-  color: var(--color-slate-900);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  color: var(--text-primary);
+  transition: all var(--transition-base);
   background: white;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .university-profile-input:focus,
 .university-profile-textarea:focus {
   outline: none;
-  border-color: var(--color-primary-600);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
 .university-profile-input::placeholder,
 .university-profile-textarea::placeholder {
-  color: var(--color-slate-400);
+  color: var(--text-tertiary);
   opacity: 1;
 }
 
 .university-profile-textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
 }
 
-/* Button Styling */
+/* Button */
 .university-profile-button {
-  padding: 0.75rem 1.5rem;
-  background: var(--color-primary-600);
+  padding: 0.875rem 2rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
   color: white;
   border: none;
-  border-radius: 24px;
+  border-radius: var(--radius-full);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-base);
+  box-shadow: 0 4px 12px rgba(217, 119, 87, 0.2);
+  font-family: var(--font-sans);
 }
 
 .university-profile-button:hover:not(:disabled) {
-  background: var(--color-primary-700);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+  box-shadow: 0 6px 16px rgba(217, 119, 87, 0.3);
+  transform: translateY(-2px);
 }
 
 .university-profile-button:disabled {
-  background: var(--color-slate-300);
+  background: var(--border-color);
+  color: var(--text-tertiary);
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
 }
 
-/* Success/Error Messages */
+/* ========================================
+   SUCCESS/ERROR MESSAGES
+======================================== */
 .university-profile-success {
-  background: var(--color-success-50);
-  color: var(--color-success-600);
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  margin-top: 1rem;
+  background: var(--success-light);
+  color: var(--success-color);
+  padding: 0.875rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-top: 1.5rem;
   text-align: center;
-  font-weight: 500;
-  border: 1px solid var(--color-success-600);
+  font-weight: 600;
+  border: 2px solid var(--success-color);
+  animation: slideUp var(--transition-base);
 }
 
 .university-profile-error {
-  background: var(--color-danger-50);
-  color: var(--color-danger-600);
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  margin-top: 1rem;
+  background: var(--danger-light);
+  color: var(--danger-color);
+  padding: 0.875rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-top: 1.5rem;
   text-align: center;
-  font-weight: 500;
-  border: 1px solid var(--color-danger-600);
+  font-weight: 600;
+  border: 2px solid var(--danger-color);
+  animation: slideUp var(--transition-base);
 }
 
-/* Loading State */
-.university-profile-loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  font-size: 1.125rem;
-  color: var(--color-slate-600);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .university-profile-container {
-    padding: 1rem 0.5rem;
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+@media (max-width: 1024px) {
+  .university-profile-header,
+  .university-profile-form-card {
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
+  
+  .university-profile-info-section {
+    padding: 0 1.5rem 1.5rem;
+  }
+  
+  .university-profile-logo,
+  .university-profile-logo-placeholder {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .university-profile-logo-placeholder {
+    font-size: 3.5rem;
+  }
+}
 
+@media (max-width: 768px) {
+  .university-profile-banner {
+    height: 150px;
+  }
+  
+  .university-profile-btn-requests {
+    top: 1rem;
+    right: 1rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+  
   .university-profile-info-section {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    margin-top: -60px;
+    padding: 0 1rem 1.5rem;
   }
 
   .university-profile-details {
     padding-top: 1rem;
   }
 
-  .university-profile-logo {
-    width: 100px;
-    height: 100px;
+  .university-profile-logo,
+  .university-profile-logo-placeholder {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .university-profile-logo-placeholder {
+    font-size: 3rem;
   }
 
   .university-profile-name {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
   }
 
   .university-profile-meta {
     align-items: center;
   }
+  
+  .university-profile-form-card {
+    padding: 1.5rem;
+    margin: 1.5rem 1rem;
+  }
+  
+  .university-profile-form-title {
+    font-size: 1.25rem;
+  }
 }
 
-.university-profile-btn-requests {
-margin: 1rem 0 1.5rem auto; 
-padding: 0.6rem 1.25rem;
-background: var(--color-primary-600);
-color: #fff;
-border: none;
-border-radius: 24px;
-font-weight: 600;
-font-size: 0.95rem;
-cursor: pointer;
-transition: all 0.2s ease;
-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.university-profile-btn-requests:hover {
-background: var(--color-primary-700);
-transform: translateY(-1px);
-box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-}
-
-.university-profile-btn-requests:focus {
-outline: none;
-box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
-}
-
-.university-profile-btn-requests:active {
-transform: translateY(0);
-box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-}
-
-@media (max-width: 768px) {
-.university-profile-btn-requests {
-margin: 1rem auto 1.25rem; /* center on mobile */
-width: 100%;
-max-width: 360px;
-text-align: center;
-}
-}
-
-
-.university-profile-header .university-profile-btn-requests {
-position: absolute;
-top: 16px;
-right: 16px;
-margin: 0;
+@media (max-width: 480px) {
+  .university-profile-banner {
+    height: 120px;
+  }
+  
+  .university-profile-header {
+    border-radius: 0;
+  }
+  
+  .university-profile-btn-requests {
+    position: static;
+    width: 100%;
+    margin: 1rem;
+    text-align: center;
+  }
+  
+  .university-profile-info-section {
+    padding: 0 0.75rem 1.25rem;
+  }
+  
+  .university-profile-form-card {
+    padding: 1.25rem;
+    margin: 1rem 0.5rem;
+    border-radius: var(--radius-lg);
+  }
+  
+  .university-profile-about-section {
+    padding: 1.25rem 1rem;
+  }
+  
+  .university-profile-button {
+    width: 100%;
+  }
 }

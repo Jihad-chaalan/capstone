@@ -24,10 +24,10 @@
 }
 
 .admin-quick-link-btn:hover {
-  border-color: #0073b1;
-  background: #f8f9fa;
+  border-color: #D97757;
+  background: #FAF9F5;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(217, 119, 87, 0.15);
 }
 
 .admin-quick-link-btn svg {
@@ -38,8 +38,8 @@
 .admin-nav-back-btn {
   padding: 0.5rem 1rem;
   background: white;
-  color: #0073b1;
-  border: 1px solid #0073b1;
+  color: #D97757;
+  border: 1px solid #D97757;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
@@ -48,7 +48,7 @@
 }
 
 .admin-nav-back-btn:hover {
-  background: #f3f2ef;
+  background: #FCE8E0;
 }
 
 /* Make stat cards clickable */
@@ -58,9 +58,10 @@
 
 .admin-stat-card[style*="cursor: pointer"]:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-  border: 2px solid #0073b1;
+  box-shadow: 0 6px 16px rgba(217, 119, 87, 0.15);
+  border: 2px solid #D97757;
 }
+
 /* Filter Tabs */
 .filter-tabs {
   display: flex;
@@ -82,11 +83,11 @@
 }
 
 .filter-tabs button:hover {
-  background: #f3f6f8;
+  background: #FCE8E0;
 }
 
 .filter-tabs button.active {
-  background: #0a66c2;
+  background: #D97757;
   color: white;
 }
 
@@ -117,7 +118,7 @@
 /* Certificate Button */
 .btn-view-cert {
   padding: 6px 12px;
-  background: #0a66c2;
+  background: #D97757;
   color: white;
   border: none;
   border-radius: 4px;
@@ -127,7 +128,7 @@
 }
 
 .btn-view-cert:hover {
-  background: #004182;
+  background: #C45F3F;
 }
 
 /* Reject Textarea */
@@ -144,7 +145,7 @@
 
 .reject-textarea:focus {
   outline: none;
-  border-color: #0a66c2;
+  border-color: #D97757;
 }
 
 /* Success/Danger Buttons */
@@ -217,30 +218,35 @@
 }
 
 .skill-checkbox:hover {
-  border-color: #0a66c2;
-  background: #f3f6f8;
+  border-color: #D97757;
+  background: #FCE8E0;
 }
 
 .skill-checkbox input[type="checkbox"]:checked + .skill-badge {
-  color: #0a66c2;
   font-weight: 600;
 }
 
 .skill-badge {
   font-size: 14px;
-  color: #666;
+  color: #5A5550;
 }
 
 .skill-badge-display {
   display: inline-block;
   padding: 4px 12px;
-  background: #0a66c2;
+  background: #D97757;
   color: white;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 500;
   margin-right: 6px;
   margin-bottom: 6px;
+  transition: all 0.2s;
+}
+
+.skill-badge-display:hover {
+  background: #C45F3F;
+  transform: translateY(-1px);
 }
 
 .skills-display {
