@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/client";
 import { useAuthStore } from "../store/authStore";
 import "../styles/AdminPages.css";
-import "../styles/AdminDashboard.css";
+// import "../styles/AdminDashboard.css";
 
 const AdminSkillsPage = () => {
   const navigate = useNavigate();

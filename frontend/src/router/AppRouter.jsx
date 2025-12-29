@@ -24,6 +24,7 @@ import AdminSkillsPage from "../pages/AdminSkillsPage";
 import CompanyPublicProfilePage from "../pages/CompanyPublicProfile";
 import SeekerPublicProfilePage from "../pages/SeekerPublicProfile";
 import CompanyRequestsPage from "../pages/CompanyRequestsPage";
+import SeekerApplicationsPage from "../pages/SeekerApplicationsPage";
 
 const ProtectedRoute = () => {
   const { token, user, fetchUser, isLoading } = useAuthStore();
@@ -85,6 +86,7 @@ export const AppRouter = () => {
           element={<CompanyPublicProfilePage />}
         />
         <Route path="/seekers/:id" element={<SeekerPublicProfilePage />} />
+        <Route path="/my-applications" element={<SeekerApplicationsPage />} />
       </Routes>
     </BrowserRouter>
   );

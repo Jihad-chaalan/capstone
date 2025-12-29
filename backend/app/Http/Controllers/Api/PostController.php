@@ -15,7 +15,7 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Post::with(['company.user']);
+        $query = Post::with(['company.user'])->withCount('applications');
 
         // Filter by technology
         if ($request->has('technology')) {

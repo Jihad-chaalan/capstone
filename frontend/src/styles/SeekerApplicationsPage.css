@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+  --color-primary: #D97757;
+  --color-primary-light: #E39979;
+  --color-primary-dark: #C45F3F;
+  --color-primary-glow: rgba(217, 119, 87, 0.15);
+  --color-secondary: #C46851;
+  --color-accent: #E8945F;
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+  --color-bg-primary: #FAF9F5;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #F0EDE6;
+  --color-text-primary: #2D2A26;
+  --color-text-secondary: #5A5550;
+  --color-text-muted: #8A857D;
+  --color-border: #E5E0D8;
+  --color-border-light: #F0EDE6;
+  --shadow-md: 0 4px 6px -1px rgba(45, 42, 38, 0.08), 0 2px 4px -1px rgba(45, 42, 38, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(45, 42, 38, 0.08), 0 4px 6px -2px rgba(45, 42, 38, 0.04);
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.my-applications-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #F0EDE6 0%, #FAF9F5 50%, #F5F2EB 100%);
+  font-family: var(--font-primary);
+}
+
+.seeker-posts-navbar {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--color-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+}
+
+.seeker-posts-navbar-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.seeker-posts-navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 0;
+}
+
+.seeker-posts-navbar-brand {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition: transform var(--transition-base);
+}
+
+.seeker-posts-navbar-brand:hover {
+  transform: scale(1.05);
+}
+
+.seeker-posts-navbar-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.seeker-posts-nav-button,
+.seeker-posts-nav-logout {
+  padding: 0.625rem 1.25rem;
+  background: white;
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 1px 2px 0 rgba(45, 42, 38, 0.05);
+}
+
+.seeker-posts-nav-button:hover,
+.seeker-posts-nav-logout:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.seeker-posts-nav-logout {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+}
+
+.my-applications-container {
+  max-width: 800px;
+  margin: 40px auto 0 auto;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 32px 24px;
+}
+
+.my-applications-container h2 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  margin-bottom: 24px;
+  color: var(--color-primary-dark);
+  text-align: center;
+}
+
+.applications-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.application-card {
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-light);
+  transition: box-shadow var(--transition-base);
+}
+
+.application-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.application-card > div {
+  margin-bottom: 6px;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+}
+
+.application-card strong {
+  color: var(--color-primary);
+}
+
+.error {
+  color: var(--color-danger);
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .my-applications-container {
+    padding: 16px 4px;
+  }
+  .application-card {
+    padding: 12px 6px;
+  }
+  .seeker-posts-navbar-content {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .seeker-posts-navbar-brand {
+    font-size: 1.25rem;
+  }
+}

@@ -234,7 +234,7 @@ class ApplicationController extends Controller
     // Company rates a completed application
     public function rateApplication(Request $request, $id)
     {
-        $request->validate(['score' => 'required|integer|min:1|max:5', 'comment' => 'nullable|string']);
+        $request->validate(['score' => 'required|numeric|min:1|max:5', 'comment' => 'nullable|string']);
 
         $app = Application::with('post.company', 'seeker')->findOrFail($id);
         $post = $app->post;

@@ -4,10 +4,57 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/client";
 import { useAuthStore } from "../store/authStore";
 
+const FullStar = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFD700">
+    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+  </svg>
+);
+
+const HalfStar = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24">
+    <defs>
+      <linearGradient id="half">
+        <stop offset="50%" stopColor="#FFD700" />
+        <stop offset="50%" stopColor="#ccc" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+      fill="url(#half)"
+    />
+  </svg>
+);
+
+const EmptyStar = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="#ccc">
+    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+  </svg>
+);
+
 const RatingForm = ({ initialScore = 5, onSubmit, onCancel }) => {
   const [score, setScore] = useState(initialScore);
+  const [hover, setHover] = useState(null);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const getStarType = (index) => {
+    const value = hover !== null ? hover : score;
+    if (value >= index + 1) return "full";
+    if (value >= index + 0.5) return "half";
+    return "empty";
+  };
+
+  const handleClick = (index, e) => {
+    const { left, width } = e.target.getBoundingClientRect();
+    setScore(e.clientX - left < width / 2 ? index + 0.5 : index + 1);
+  };
+
+  const handleMouseMove = (index, e) => {
+    const { left, width } = e.target.getBoundingClientRect();
+    setHover(e.clientX - left < width / 2 ? index + 0.5 : index + 1);
+  };
+
+  const handleMouseLeave = () => setHover(null);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -22,14 +69,31 @@ const RatingForm = ({ initialScore = 5, onSubmit, onCancel }) => {
 
   return (
     <form onSubmit={submit}>
-      <label style={{ display: "block", marginBottom: 6 }}>Score</label>
-      <select value={score} onChange={(e) => setScore(Number(e.target.value))}>
-        {[5, 4, 3, 2, 1].map((s) => (
-          <option key={s} value={s}>
-            {s} star{s > 1 ? "s" : ""}
-          </option>
-        ))}
-      </select>
+      <label style={{ display: "block", marginBottom: 6 }}>Rating</label>
+      <div style={{ marginBottom: 12, display: "flex" }}>
+        {[0, 1, 2, 3, 4].map((i) => {
+          const type = getStarType(i);
+          return (
+            <span
+              key={i}
+              style={{ cursor: "pointer", marginRight: 4 }}
+              onClick={(e) => handleClick(i, e)}
+              onMouseMove={(e) => handleMouseMove(i, e)}
+              onMouseLeave={handleMouseLeave}
+              aria-label={`${i + 1} star`}
+              role="button"
+            >
+              {type === "full" ? (
+                <FullStar />
+              ) : type === "half" ? (
+                <HalfStar />
+              ) : (
+                <EmptyStar />
+              )}
+            </span>
+          );
+        })}
+      </div>
       <label style={{ display: "block", marginTop: 12, marginBottom: 6 }}>
         Comment (optional)
       </label>
@@ -710,7 +774,7 @@ const CompanyProfilePage = () => {
             <div className="company-profile-posts-list">
               {companyData.posts.map((post) => (
                 <div key={post.id} className="company-profile-post-item">
-                  {post.photo && (
+                  {/* {post.photo && (
                     <img
                       src={
                         post.photo.startsWith("http")
@@ -722,7 +786,7 @@ const CompanyProfilePage = () => {
                       alt={post.position}
                       className="company-profile-post-photo"
                     />
-                  )}
+                  )} */}
                   <div className="company-profile-post-content">
                     <h3 className="company-profile-post-title">
                       {post.position}
