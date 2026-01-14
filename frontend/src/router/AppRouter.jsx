@@ -25,6 +25,7 @@ import CompanyPublicProfilePage from "../pages/CompanyPublicProfile";
 import SeekerPublicProfilePage from "../pages/SeekerPublicProfile";
 import CompanyRequestsPage from "../pages/CompanyRequestsPage";
 import SeekerApplicationsPage from "../pages/SeekerApplicationsPage";
+import Chatbot from "../pages/Chatbot";
 
 const ProtectedRoute = () => {
   const { token, user, fetchUser, isLoading } = useAuthStore();
@@ -45,7 +46,12 @@ const ProtectedRoute = () => {
 
   if (!token || !user) return <Navigate to="/login" />;
 
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      <Chatbot />
+    </>
+  );
 };
 
 export const AppRouter = () => {

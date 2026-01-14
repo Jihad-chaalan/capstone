@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import api from "../api/client";
+import { useChatStore } from "./chatStore";
 
 export const useAuthStore = create(
   persist(
@@ -72,6 +73,7 @@ export const useAuthStore = create(
           set({ user: null, token: null, validationErrors: null });
           localStorage.removeItem("auth_token");
           localStorage.removeItem("auth-storage");
+          useChatStore.getState().resetChat();
         }
       },
 

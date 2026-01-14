@@ -13,8 +13,7 @@ use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\InternshipRequestController;
 use App\Http\Controllers\Api\AdminCompanyController;
 use App\Http\Controllers\Api\SkillController;
-
-
+use App\Http\Controllers\Api\ChatbotController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -136,5 +135,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/internship-requests', [InternshipRequestController::class, 'store']);
         Route::put('/internship-requests/{id}', [InternshipRequestController::class, 'update']);
         Route::delete('/internship-requests/{id}', [InternshipRequestController::class, 'destroy']);
+    });
+
+
+    // Chatbot routes
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/chatbot/chat', [ChatbotController::class, 'chat']);
+        Route::get('/chatbot/statistics', [ChatbotController::class, 'getStatistics']);
     });
 });

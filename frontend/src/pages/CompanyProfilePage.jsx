@@ -589,14 +589,15 @@ const CompanyProfilePage = () => {
           className="quick-action-btn quick-action-primary"
           title="Add Post"
         >
-          + Add Post
+          +{/* + Add Post */}
         </button>
         <button
           onClick={() => scrollToSection("edit-profile-section")}
           className="quick-action-btn"
           title="Edit Profile"
         >
-          ✏️ Edit Profile
+          ✏️
+          {/* Edit Profile */}
         </button>
       </div>
 
