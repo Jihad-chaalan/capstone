@@ -26,7 +26,7 @@ import uvicorn
 # Import our modules
 from chatbot.db_loader import DatabaseLoader
 from chatbot.rag_system import RAGSystem
-from chatbot.role_based_agent import RoleBasedAgent
+from chatbot.role_based_agent import InternHubAgent
 
 # ==================== FASTAPI APP ====================
 app = FastAPI(
@@ -53,7 +53,7 @@ try:
         "chatbot", 
         "chroma_db"
     ))
-    agent = RoleBasedAgent()
+    agent = InternHubAgent(db, rag)
     print(" All modules initialized successfully")
 except Exception as e:
     print(f" Error initializing modules: {e}")
@@ -152,8 +152,6 @@ async def chat(request: ChatRequest):
         result = agent.get_response(
             query=request.message.strip(),
             role=request.user_role,
-            db=db,
-            rag=rag,
             history=request.conversation_history or []
         )
         
@@ -247,3 +245,6 @@ if __name__ == "__main__":
         port=8001,
         log_level="info"
     )
+
+
+
