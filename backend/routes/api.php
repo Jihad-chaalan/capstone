@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\InternshipRequestController;
 use App\Http\Controllers\Api\AdminCompanyController;
 use App\Http\Controllers\Api\SkillController;
 use App\Http\Controllers\Api\ChatbotController;
+use App\Http\Controllers\Api\AdminStatisticsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -77,6 +78,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/skills/{id}', [SkillController::class, 'update']);
         Route::delete('/skills/{id}', [SkillController::class, 'destroy']);
         Route::post('/skills/{id}/toggle-status', [SkillController::class, 'toggleStatus']);
+
+        // Admin Statistics
+        Route::get('/statistics/overview', [AdminStatisticsController::class, 'getOverview']);
+        Route::get('/statistics/skills-distribution', [AdminStatisticsController::class, 'getSkillsDistribution']);
+        Route::get('/statistics/technology-demand', [AdminStatisticsController::class, 'getTechnologyDemand']);
+        Route::get('/statistics/applications', [AdminStatisticsController::class, 'getApplicationsStats']);
+        Route::get('/statistics/users-breakdown', [AdminStatisticsController::class, 'getUsersBreakdown']);
+        Route::get('/statistics/all', [AdminStatisticsController::class, 'getAllStatistics']);
     });
 
     // Company routes

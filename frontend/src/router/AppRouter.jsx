@@ -5,7 +5,7 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAuthStore } from "../store/authStore";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
@@ -29,9 +29,13 @@ import Chatbot from "../pages/Chatbot";
 
 const ProtectedRoute = () => {
   const { token, user, fetchUser, isLoading } = useAuthStore();
+  const hasFetched = useRef(false);
 
   useEffect(() => {
-    if (token && !user) fetchUser();
+    if (token && !user && !hasFetched.current) {
+      hasFetched.current = true;
+      fetchUser();
+    }
   }, [token, user, fetchUser]);
 
   if (isLoading)

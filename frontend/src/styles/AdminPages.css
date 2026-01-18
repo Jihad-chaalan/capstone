@@ -280,3 +280,73 @@
   color: #666;
   margin-top: 8px;
 }
+/* Modal form refinements for Skills/Companies */
+.admin-modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.admin-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #4a4640;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid #e2e0dc;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: #fdfcf9;
+  color: #2d2a26;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #d97757;
+  box-shadow: 0 0 0 3px rgba(217, 119, 87, 0.12);
+  background: #fffdf8;
+}
+
+.form-group input[type="checkbox"] {
+  width: auto;
+  padding: 0.35rem;
+  accent-color: #d97757;
+}
+
+.admin-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.admin-modal-footer .btn-primary,
+.admin-modal-footer .admin-btn-secondary,
+.admin-modal-footer .admin-btn-reject,
+.admin-modal-footer .admin-btn-view,
+.admin-modal-footer .admin-btn-delete {
+  min-width: 120px;
+}

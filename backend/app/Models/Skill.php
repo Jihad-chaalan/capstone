@@ -24,7 +24,7 @@ class Skill extends Model
      */
     public function seekers()
     {
-        return $this->belongsToMany(Seeker::class, 'seeker_skill');
+        return $this->belongsToMany(User::class, 'seeker_skill', 'skill_id', 'seeker_id');
     }
 
     /**

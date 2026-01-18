@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    ADMIN DASHBOARD - WARM CORAL/CREAM DESIGN
    Primary: #D97757 (Coral)
    Background: #FAF9F5 (Cream)
@@ -109,7 +109,7 @@
   font-family: var(--font-primary);
   color: var(--color-text-primary);
   position: relative;
-  animation: fadeIn 0.6s var(--transition-base);
+  /* animation: fadeIn 0.6s var(--transition-base); */
 }
 
 /* Dotted background pattern */
@@ -138,7 +138,7 @@
   top: 0;
   z-index: 1000;
   box-shadow: var(--shadow-md);
-  animation: slideDown 0.4s var(--transition-base);
+  /* animation: slideDown 0.4s var(--transition-base); */
 }
 
 .admin-navbar-content {
@@ -224,7 +224,7 @@
   min-width: 200px;
   z-index: 1001;
   overflow: hidden;
-  animation: scaleIn var(--transition-base);
+  /* animation: scaleIn var(--transition-base); */
 }
 
 .admin-dropdown-item {
@@ -388,7 +388,7 @@
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border-light);
   margin-bottom: 2rem;
-  animation: fadeIn 0.6s var(--transition-base);
+  /* animation: fadeIn 0.6s var(--transition-base); */
 }
 
 .admin-section-title {
@@ -552,6 +552,7 @@
   cursor: pointer;
   transition: all var(--transition-base);
   box-shadow: var(--shadow-sm);
+  margin: 2px;
 }
 
 .admin-btn-view:hover {
@@ -592,14 +593,14 @@
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  animation: fadeIn var(--transition-base);
+  /* animation: fadeIn var(--transition-base); */
 }
 
 .admin-modal-content {
   background: var(--color-bg-secondary);
   border-radius: var(--radius-xl);
   padding: 2.5rem;
-  max-width: 500px;
+  max-width: 700px;
   width: 90%;
     max-height: 90vh;
   overflow-y: auto;
@@ -608,6 +609,7 @@
   border: 1px solid var(--color-border-light);
   animation: scaleIn var(--transition-base);
   position: relative;
+  top: 50px;
 }
 
 .admin-modal-large {
@@ -860,4 +862,55 @@
   .admin-modal-footer button {
     width: 100%;
   }
+}
+/* ============================================
+   CHARTS SECTION
+   ============================================ */
+
+.admin-charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.admin-chart-container {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-light);
+  transition: all var(--transition-base);
+}
+
+.admin-chart-container:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.admin-chart-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  color: var(--color-text-primary);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-border-light);
+}
+
+.recharts-tooltip {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid var(--color-border-light) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.recharts-tooltip-label {
+  color: var(--color-text-primary) !important;
+  font-weight: 600 !important;
+}
+
+.recharts-tooltip-item {
+  color: var(--color-text-secondary) !important;
 }

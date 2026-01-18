@@ -3,10 +3,22 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/client";
 import { useAuthStore } from "../store/authStore";
 import "../styles/AdminDashboard.css";
+import {
+  UsersBreakdownChart,
+  SkillsDistributionChart,
+  TechnologyDemandChart,
+  ApplicationsStatsChart,
+  ActivityOverviewChart,
+} from "../pages/AdminCharts";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
+  // Chart data states
+  const [usersBreakdown, setUsersBreakdown] = useState([]);
+  const [skillsDistribution, setSkillsDistribution] = useState([]);
+  const [technologyDemand, setTechnologyDemand] = useState([]);
+  const [applicationsStats, setApplicationsStats] = useState(null);
   const [stats, setStats] = useState({
     totalUsers: 0,
     seekers: 0,
@@ -20,62 +32,83 @@ const AdminDashboard = () => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
 
-  // Redirect if not admin
   useEffect(() => {
-    if (user && user.role !== "admin") {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
+    let isMounted = true;
+    let loadingTimer;
 
-  useEffect(() => {
     const loadData = async () => {
+      loadingTimer = setTimeout(() => {
+        if (isMounted) setLoading(true);
+      }, 500);
+
       try {
-        const [usersRes, appsRes, postsRes, skillsRes] = await Promise.all([
-          api.get("/admin/users"),
-          api.get("/admin/applications"),
-          api.get("/posts"),
-          api.get("/admin/skills"),
-        ]);
+        // Try new statistics endpoint first
+        try {
+          const statsRes = await api.get("/admin/statistics/all");
+          const data = statsRes.data.data;
 
-        // Handle paginated users response
-        const usersData = usersRes.data.data.data || usersRes.data.data || [];
-        // Handle applications response
-        const appsData = Array.isArray(appsRes.data.data)
-          ? appsRes.data.data
-          : appsRes.data.data?.data || [];
-        // Handle posts response
-        const postsData = Array.isArray(postsRes.data.data)
-          ? postsRes.data.data
-          : postsRes.data.data?.data || [];
-        // Handle skills response
-        const skillsData = Array.isArray(skillsRes.data.data)
-          ? skillsRes.data.data
-          : skillsRes.data.data?.data || [];
-        // Calculate stats
-        const usersArray = Array.isArray(usersData) ? usersData : [];
-        const appsArray = Array.isArray(appsData) ? appsData : [];
-        const postsArray = Array.isArray(postsData) ? postsData : [];
-        const skillsArray = Array.isArray(skillsData) ? skillsData : [];
+          if (!isMounted) return;
 
-        setStats({
-          totalUsers: usersArray.length,
-          seekers: usersArray.filter((u) => u.role === "seeker").length,
-          companies: usersArray.filter((u) => u.role === "company").length,
-          universities: usersArray.filter((u) => u.role === "university")
-            .length,
-          totalApplications: appsArray.length,
-          totalPosts: postsArray.length,
-          skills: skillsArray.length,
-        });
+          setStats({
+            totalUsers: data.overview.totalUsers || 0,
+            seekers: data.overview.seekers || 0,
+            companies: data.overview.companies || 0,
+            universities: data.overview.universities || 0,
+            totalApplications: data.overview.totalApplications || 0,
+            totalPosts: data.overview.totalPosts || 0,
+            skills: data.overview.totalSkills || 0,
+          });
+
+          setUsersBreakdown(data.usersBreakdown || []);
+          setSkillsDistribution(data.skillsDistribution || []);
+          setTechnologyDemand(data.technologyDemand || []);
+          setApplicationsStats(data.applicationsStats || {});
+        } catch (error) {
+          // Fallback to old endpoints
+          console.log("New endpoint failed, using legacy endpoints...", error);
+          const [usersRes, appsRes, postsRes, skillsRes] = await Promise.all([
+            api.get("/admin/users"),
+            api.get("/admin/applications"),
+            api.get("/posts"),
+            api.get("/admin/skills"),
+          ]);
+
+          const usersData = usersRes.data.data.data || usersRes.data.data || [];
+          const appsData = Array.isArray(appsRes.data.data)
+            ? appsRes.data.data
+            : appsRes.data.data?.data || [];
+          const postsData = Array.isArray(postsRes.data.data)
+            ? postsRes.data.data
+            : postsRes.data.data?.data || [];
+          const skillsData = Array.isArray(skillsRes.data.data)
+            ? skillsRes.data.data
+            : skillsRes.data.data?.data || [];
+
+          setStats({
+            totalUsers: usersData.length,
+            seekers: usersData.filter((u) => u.role === "seeker").length,
+            companies: usersData.filter((u) => u.role === "company").length,
+            universities: usersData.filter((u) => u.role === "university")
+              .length,
+            totalApplications: appsData.length,
+            totalPosts: postsData.length,
+            skills: skillsData.length,
+          });
+        }
 
         setLoading(false);
       } catch (error) {
         console.error("Error loading admin data:", error);
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     loadData();
+
+    return () => {
+      isMounted = false;
+      clearTimeout(loadingTimer);
+    };
   }, []);
 
   // Close menu when clicking outside
@@ -320,6 +353,15 @@ const AdminDashboard = () => {
               <p className="admin-stat-label">Manage Skills</p>
             </div> */}
           </div>
+        </div>
+
+        {/* Charts Section */}
+        <div className="admin-charts-section">
+          <UsersBreakdownChart data={usersBreakdown} />
+          <ActivityOverviewChart stats={stats} />
+          <SkillsDistributionChart data={skillsDistribution} />
+          <TechnologyDemandChart data={technologyDemand} />
+          <ApplicationsStatsChart data={applicationsStats} />
         </div>
 
         {/* Quick Links */}

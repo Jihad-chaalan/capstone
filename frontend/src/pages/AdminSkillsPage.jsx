@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/client";
 import { useAuthStore } from "../store/authStore";
 import "../styles/AdminPages.css";
-// import "../styles/AdminDashboard.css";
 
 const AdminSkillsPage = () => {
   const navigate = useNavigate();
@@ -58,10 +57,12 @@ const AdminSkillsPage = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
+
+  const toggleMenu = () => setShowMenu(!showMenu);
 
   const handleAddNew = () => {
     setEditingSkill(null);
@@ -126,171 +127,195 @@ const AdminSkillsPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="admin-container">
-        <div className="loading-spinner">Loading skills...</div>
-      </div>
-    );
+    return <div className="admin-loading">Loading skills...</div>;
   }
 
   return (
-    <div className="admin-container">
-      {/* Header */}
-      <div className="admin-header">
-        <div className="admin-header-left">
-          <h1>Skills Management</h1>
-          <button className="back-button" onClick={() => navigate("/admin")}>
-            ← Back to Dashboard
-          </button>
-        </div>
-        <div className="admin-header-right" ref={menuRef}>
-          <button className="btn-primary" onClick={handleAddNew}>
-            + Add New Skill
-          </button>
-          <div className="user-info" onClick={() => setShowMenu(!showMenu)}>
-            <span>{user?.name}</span>
-            <div className="user-avatar">{user?.name?.charAt(0)}</div>
-          </div>
-          {showMenu && (
-            <div className="dropdown-menu">
-              <button onClick={handleLogout}>Logout</button>
+    <div className="admin-page">
+      <nav className="admin-navbar">
+        <div className="admin-navbar-content">
+          <h2 className="admin-navbar-title">Skills Management</h2>
+          <div className="admin-navbar-actions">
+            <button className="btn-primary" onClick={handleAddNew}>
+              + Add New Skill
+            </button>
+            <button
+              onClick={() => navigate("/admin")}
+              className="admin-nav-back-btn"
+            >
+              Back to Dashboard
+            </button>
+            <div className="admin-menu-container" ref={menuRef}>
+              <button onClick={toggleMenu} className="admin-menu-button">
+                ⋮
+              </button>
+              {showMenu && (
+                <div className="admin-dropdown">
+                  <button
+                    onClick={handleLogout}
+                    className="admin-dropdown-item"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      </nav>
 
-      {/* Skills Table */}
-      <div className="admin-content">
-        <div className="table-container">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Skill Name</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Seekers</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {skills.length === 0 ? (
+      <div className="admin-container">
+        <div className="admin-section">
+          <h2 className="admin-section-title">All Skills ({skills.length})</h2>
+
+          {/* Skills Table */}
+          <div className="admin-table-container">
+            <table className="admin-table">
+              <thead>
                 <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    No skills found. Add your first skill!
-                  </td>
+                  <th>ID</th>
+                  <th>Skill Name</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ) : (
-                skills.map((skill) => (
-                  <tr key={skill.id}>
-                    <td>{skill.id}</td>
-                    <td>
-                      <strong>{skill.name}</strong>
-                    </td>
-                    <td>{skill.description || "N/A"}</td>
-                    <td>
-                      <button
-                        className={`status-toggle ${
-                          skill.is_active ? "active" : "inactive"
-                        }`}
-                        onClick={() => handleToggleStatus(skill.id)}
-                      >
-                        {skill.is_active ? "Active" : "Inactive"}
-                      </button>
-                    </td>
-                    <td>{skill.seekers_count || 0}</td>
-                    <td>
-                      <button
-                        className="btn-view"
-                        onClick={() => handleEdit(skill)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn-delete"
-                        onClick={() => handleDelete(skill.id)}
-                      >
-                        Delete
-                      </button>
+              </thead>
+              <tbody>
+                {skills.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" style={{ textAlign: "center" }}>
+                      No skills found. Add your first skill!
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  skills.map((skill) => (
+                    <tr key={skill.id}>
+                      <td>{skill.id}</td>
+                      <td>
+                        <strong>{skill.name}</strong>
+                      </td>
+                      <td>{skill.description || "N/A"}</td>
+                      <td>
+                        <button
+                          className={`status-toggle ${
+                            skill.is_active ? "active" : "inactive"
+                          }`}
+                          onClick={() => handleToggleStatus(skill.id)}
+                        >
+                          {skill.is_active ? "Active" : "Inactive"}
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          className="admin-btn-view"
+                          onClick={() => handleEdit(skill)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="admin-btn-delete"
+                          onClick={() => handleDelete(skill.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+            {skills.length === 0 && (
+              <p className="admin-empty-message">No skills available</p>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Add/Edit Modal */}
-      {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>{editingSkill ? "Edit Skill" : "Add New Skill"}</h2>
-              <button
-                className="modal-close"
-                onClick={() => setShowModal(false)}
-              >
-                ×
-              </button>
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div className="modal-body">
-                <div className="form-group">
-                  <label>Skill Name *</label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    placeholder="e.g. JavaScript, Python, React"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Description (optional)</label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
-                    placeholder="Describe the skill..."
-                    rows="3"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>
+        {/* Add/Edit Modal */}
+        {showModal && (
+          <div
+            className="admin-modal-overlay"
+            onClick={() => setShowModal(false)}
+          >
+            <div
+              className="admin-modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="admin-modal-header">
+                <h2 className="admin-modal-title">
+                  {editingSkill ? "Edit Skill" : "Add New Skill"}
+                </h2>
+                <button
+                  className="admin-modal-close"
+                  onClick={() => setShowModal(false)}
+                >
+                  X
+                </button>
+              </div>
+              <form onSubmit={handleSubmit}>
+                <div className="admin-modal-body">
+                  <div className="form-group">
+                    <label>Skill Name *</label>
                     <input
-                      type="checkbox"
-                      checked={formData.is_active}
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      placeholder="e.g. JavaScript, Python, React"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Description (optional)</label>
+                    <textarea
+                      value={formData.description}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          is_active: e.target.checked,
+                          description: e.target.value,
                         })
                       }
-                    />{" "}
-                    Active (visible to seekers)
-                  </label>
+                      placeholder="Describe the skill..."
+                      rows="3"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={formData.is_active}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            is_active: e.target.checked,
+                          })
+                        }
+                      />{" "}
+                      Active (visible to seekers)
+                    </label>
+                  </div>
                 </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="btn-primary" disabled={saving}>
-                  {saving ? "Saving..." : editingSkill ? "Update" : "Create"}
-                </button>
-              </div>
-            </form>
+                <div className="admin-modal-footer">
+                  <button
+                    type="button"
+                    className="admin-btn-secondary"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={saving}
+                  >
+                    {saving ? "Saving..." : editingSkill ? "Update" : "Create"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
