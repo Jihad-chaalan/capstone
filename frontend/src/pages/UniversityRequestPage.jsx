@@ -278,7 +278,7 @@ const UniversityRequestsPage = () => {
                     <h3>{request.position}</h3>
                     <span
                       className={`uni-req-badge ${getStatusBadge(
-                        request.status
+                        request.status,
                       )}`}
                     >
                       {request.status}

@@ -300,7 +300,7 @@ const SeekerProfilePage = () => {
       <nav className="seeker-profile-navbar">
         <div className="seeker-profile-navbar-container">
           <div className="seeker-profile-navbar-content">
-            <h1 className="seeker-profile-navbar-brand">Int Leb Web</h1>
+            <h1 className="seeker-profile-navbar-brand">InternLeb</h1>
             <div className="seeker-profile-navbar-actions">
               <button
                 onClick={() => navigate("/posts")}
@@ -438,11 +438,11 @@ const SeekerProfilePage = () => {
                       Status: {app.status}
                       {app.started_at &&
                         ` • Started: ${new Date(
-                          app.started_at
+                          app.started_at,
                         ).toLocaleDateString()}`}
                       {app.completed_at &&
                         ` • Completed: ${new Date(
-                          app.completed_at
+                          app.completed_at,
                         ).toLocaleDateString()}`}
                     </div>
                   </div>
@@ -678,8 +678,8 @@ const SeekerProfilePage = () => {
                 {projectSaving
                   ? "Saving..."
                   : editingProjectId
-                  ? "Update Project"
-                  : "Add Project"}
+                    ? "Update Project"
+                    : "Add Project"}
               </button>
               {editingProjectId && (
                 <button

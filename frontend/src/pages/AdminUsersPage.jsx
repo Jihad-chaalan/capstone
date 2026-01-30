@@ -223,7 +223,7 @@ const AdminUsersPage = () => {
                   <span className="admin-detail-label">Role:</span>
                   <span
                     className={`admin-badge ${getRoleBadgeClass(
-                      selectedUser.role
+                      selectedUser.role,
                     )}`}
                   >
                     {selectedUser.role}

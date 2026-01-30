@@ -50,7 +50,7 @@ const getSchema = (role) =>
                 "image/png",
               ].includes(value[0].type)
             );
-          }
+          },
         ),
     }),
   });
@@ -70,6 +70,7 @@ export default function Register() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: yupResolver(getSchema(role)),
   });
@@ -78,6 +79,14 @@ export default function Register() {
     // Create FormData for file upload
     const formData = new FormData();
     Object.keys(data).forEach((key) => {
+      // Skip address and certificate if not a company
+      if (
+        (key === "address" || key === "certificate") &&
+        data.role !== "company"
+      ) {
+        return;
+      }
+
       if (key === "certificate" && data[key]?.length > 0) {
         formData.append(key, data[key][0]);
       } else if (key !== "certificate") {
@@ -89,10 +98,14 @@ export default function Register() {
     if (result.success) {
       if (data.role === "company") {
         alert(
-          "Registration successful! Your account is pending admin verification."
+          "Registration successful! Your account is pending admin verification.",
         );
+        navigate("/company/profile");
+      } else if (data.role === "university") {
+        navigate("/university/profile");
+      } else {
+        navigate("/profile");
       }
-      navigate("/dashboard");
     }
   };
 
@@ -110,6 +123,19 @@ export default function Register() {
     const file = e.target.files[0];
     if (file) {
       setCertificateFile(file);
+    }
+  };
+
+  const handleRoleChange = (e) => {
+    const newRole = e.target.value;
+    setRole(newRole);
+    setCertificateFile(null);
+    // Clear address and certificate fields when changing role
+    if (newRole !== "company") {
+      reset(
+        { address: "", certificate: null },
+        { keepValues: true, keepErrors: false },
+      );
     }
   };
 
@@ -132,11 +158,28 @@ export default function Register() {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="form-group">
-              <label className="form-label">Full Name *</label>
+              <label className="form-label">
+                {role === "seeker"
+                  ? "Full Name"
+                  : role === "company"
+                    ? "Company Name"
+                    : role === "university"
+                      ? "University Name"
+                      : "Full Name"}{" "}
+                *
+              </label>
               <input
                 {...register("name")}
                 className="form-input"
-                placeholder="John Doe"
+                placeholder={
+                  role === "seeker"
+                    ? "John Doe"
+                    : role === "company"
+                      ? "Tech Corp Inc."
+                      : role === "university"
+                        ? "Al Maaref University"
+                        : "Enter name"
+                }
               />
               {showError("name")}
             </div>
@@ -192,7 +235,7 @@ export default function Register() {
               <label className="form-label">I am a: *</label>
               <select
                 {...register("role")}
-                onChange={(e) => setRole(e.target.value)}
+                onChange={handleRoleChange}
                 className="form-select"
               >
                 <option value="">Select your role</option>

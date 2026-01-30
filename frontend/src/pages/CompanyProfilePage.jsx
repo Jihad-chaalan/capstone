@@ -166,6 +166,14 @@ const CompanyProfilePage = () => {
   const [ratingApplicationId, setRatingApplicationId] = useState(null);
 
   const [incomingRequests, setIncomingRequests] = useState([]);
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
+
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "" });
+    }, 10000);
+  };
 
   // Smooth scroll helper function
   const scrollToSection = (sectionId) => {
@@ -382,7 +390,7 @@ const CompanyProfilePage = () => {
         ? post.photo.startsWith("http")
           ? post.photo
           : `${import.meta.env.VITE_API_URL}/storage/${post.photo}`
-        : ""
+        : "",
     );
     setEditingPostId(post.id);
     setPostSuccess(false);
@@ -426,7 +434,7 @@ const CompanyProfilePage = () => {
     } catch (err) {
       console.error("Error loading applicants:", err);
       setLoadingApplicants(false);
-      alert("Failed to load applicants.");
+      showToast("Failed to load applicants", "error");
     }
   };
 
@@ -448,21 +456,22 @@ const CompanyProfilePage = () => {
           acceptedApp.seeker.name ||
           "the seeker";
         const seekerEmail = acceptedApp.seeker.user?.email || "Not provided";
-        const seekerPhone = acceptedApp.seeker.user?.phone || "Not provided";
+        const seekerPhone =
+          acceptedApp.seeker.user?.phone_number || "Not provided";
 
-        alert(
-          `✅ Acceptance successful!\n\n` +
-            `Please contact ${seekerName} to discuss the internship and next steps on:\n\n` +
-            `📧 Email: ${seekerEmail}\n` +
-            `📞 Phone: ${seekerPhone}`
+        showToast(
+          `✅ Accepted ${seekerName}! Contact: ${seekerEmail} | ${seekerPhone}`,
+          "success",
         );
+      } else {
+        showToast("Application accepted successfully!", "success");
       }
 
       await fetchApplications();
       if (selectedPost) await handleViewApplicants(selectedPost);
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to accept");
+      showToast(err.response?.data?.message || "Failed to accept", "error");
     }
   };
 
@@ -472,9 +481,10 @@ const CompanyProfilePage = () => {
       await api.post(`/applications/${applicationId}/reject`);
       await fetchApplications();
       if (selectedPost) await handleViewApplicants(selectedPost);
+      showToast("Application rejected", "success");
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to reject");
+      showToast(err.response?.data?.message || "Failed to reject", "error");
     }
   };
 
@@ -489,7 +499,10 @@ const CompanyProfilePage = () => {
       setRatingModalOpen(true);
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to mark finished");
+      showToast(
+        err.response?.data?.message || "Failed to mark finished",
+        "error",
+      );
     }
   };
 
@@ -503,16 +516,19 @@ const CompanyProfilePage = () => {
       setRatingApplicationId(null);
       await fetchApplications();
       if (selectedPost) await handleViewApplicants(selectedPost);
-      alert("Rating saved successfully!");
+      showToast("Rating saved successfully!", "success");
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to save rating");
+      showToast(
+        err.response?.data?.message || "Failed to save rating",
+        "error",
+      );
     }
   };
 
   const safeApplications = Array.isArray(applications) ? applications : [];
   const acceptedInterns = safeApplications.filter((a) =>
-    ["accepted", "in_progress"].includes(a.status)
+    ["accepted", "in_progress"].includes(a.status),
   );
 
   if (loading) {
@@ -523,10 +539,14 @@ const CompanyProfilePage = () => {
 
   return (
     <div className="company-profile-page">
+      {toast.show && (
+        <div className={`toast toast-${toast.type}`}>{toast.message}</div>
+      )}
+
       <nav className="company-profile-navbar">
         <div className="company-profile-navbar-container">
           <div className="company-profile-navbar-content">
-            <h1 className="company-profile-navbar-brand">Int Leb Web</h1>
+            <h1 className="company-profile-navbar-brand">InternLeb</h1>
             <div className="company-profile-navbar-actions">
               <button
                 onClick={() => navigate("/company/requests")}
@@ -655,8 +675,8 @@ const CompanyProfilePage = () => {
                     {companyData.verification_status === "verified"
                       ? "Verified"
                       : companyData.verification_status === "pending"
-                      ? "⏳ Pending"
-                      : "❌ Rejected"}
+                        ? "⏳ Pending"
+                        : "❌ Rejected"}
                   </span>
                 )}
               </div>
@@ -979,8 +999,8 @@ const CompanyProfilePage = () => {
                 {postSaving
                   ? "Saving..."
                   : editingPostId
-                  ? "Update Post"
-                  : "Add Post"}
+                    ? "Update Post"
+                    : "Add Post"}
               </button>
               {editingPostId && (
                 <button
@@ -1130,7 +1150,7 @@ const CompanyProfilePage = () => {
                             </>
                           )}
                           {["accepted", "in_progress"].includes(
-                            application.status
+                            application.status,
                           ) && (
                             <>
                               <button

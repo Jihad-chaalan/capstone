@@ -18,6 +18,7 @@ const SeekerPostsPage = () => {
     technology: "",
     position: "",
   });
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
     fetchPosts();
@@ -53,7 +54,7 @@ const SeekerPostsPage = () => {
       const response = await api.get("/seeker/applications");
       const applications = response.data.data.data || response.data.data || [];
       const postIds = new Set(
-        applications.map((app) => app.internship_post_id)
+        applications.map((app) => app.internship_post_id),
       );
       setAppliedPosts(postIds);
     } catch (err) {
@@ -70,6 +71,13 @@ const SeekerPostsPage = () => {
     fetchPosts();
   };
 
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "" });
+    }, 3000);
+  };
+
   const handleApply = async (postId) => {
     if (applyingPostId) return;
 
@@ -78,12 +86,12 @@ const SeekerPostsPage = () => {
       await api.post("/applications", { post_id: postId });
 
       setAppliedPosts(new Set([...appliedPosts, postId]));
-      alert("Application submitted successfully! 🎉");
+      showToast("Application submitted successfully! 🎉", "success");
     } catch (err) {
       console.error("Application error:", err);
       const message =
         err.response?.data?.message || "Failed to submit application.";
-      alert(message);
+      showToast(message, "error");
     } finally {
       setApplyingPostId(null);
     }
@@ -109,10 +117,13 @@ const SeekerPostsPage = () => {
   return (
     <div className="seeker-posts-page">
       {/* Navbar */}
+      {toast.show && (
+        <div className={`toast toast-${toast.type}`}>{toast.message}</div>
+      )}
       <nav className="seeker-posts-navbar">
         <div className="seeker-posts-navbar-container">
           <div className="seeker-posts-navbar-content">
-            <h1 className="seeker-posts-navbar-brand">Int Leb Web</h1>
+            <h1 className="seeker-posts-navbar-brand">InternLeb</h1>
             <div className="seeker-posts-navbar-actions">
               <button
                 onClick={() => navigate("/profile")}

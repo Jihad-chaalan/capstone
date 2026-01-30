@@ -161,3 +161,36 @@ export const ActivityOverviewChart = ({ stats }) => {
     </div>
   );
 };
+
+export const UniversityRequestsChart = ({ data }) => {
+  if (!data) return <p>No university requests data available</p>;
+
+  const chartData = [
+    { name: "Total", value: data.total || 0, fill: "#8B5CF6" },
+    { name: "Pending", value: data.pending || 0, fill: "#F59E0B" },
+    { name: "Accepted", value: data.accepted || 0, fill: "#10B981" },
+    { name: "Rejected", value: data.rejected || 0, fill: "#EF4444" },
+  ];
+
+  return (
+    <div className="admin-chart-container">
+      <h3 className="admin-chart-title">🎓 University Requests Status</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart
+          data={chartData}
+          margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip formatter={(value) => `${value} requests`} />
+          <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+            {chartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.fill} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};

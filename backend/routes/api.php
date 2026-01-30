@@ -85,6 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/statistics/technology-demand', [AdminStatisticsController::class, 'getTechnologyDemand']);
         Route::get('/statistics/applications', [AdminStatisticsController::class, 'getApplicationsStats']);
         Route::get('/statistics/users-breakdown', [AdminStatisticsController::class, 'getUsersBreakdown']);
+        Route::get('/statistics/university-requests', [AdminStatisticsController::class, 'getUniversityRequestsStats']);
         Route::get('/statistics/all', [AdminStatisticsController::class, 'getAllStatistics']);
     });
 

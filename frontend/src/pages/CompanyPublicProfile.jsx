@@ -36,7 +36,7 @@ const CompanyPublicProfilePage = () => {
         const applications =
           response.data.data.data || response.data.data || [];
         const postIds = new Set(
-          applications.map((app) => app.internship_post_id)
+          applications.map((app) => app.internship_post_id),
         );
         setAppliedPosts(postIds);
       } catch (err) {
@@ -116,7 +116,7 @@ const CompanyPublicProfilePage = () => {
     ? `http://localhost:8000/storage/${company.user.photo}`
     : "";
   const posts = [...(company.posts || [])].sort(
-    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    (a, b) => new Date(b.created_at) - new Date(a.created_at),
   ); // Newest first
   const isVerified = company.verification_status === "verified";
 

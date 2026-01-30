@@ -8,6 +8,8 @@ use App\Models\Post;
 use App\Models\Skill;
 use App\Models\Application;
 use Illuminate\Http\JsonResponse;
+use App\Models\InternshipRequest;
+
 
 class AdminStatisticsController extends Controller
 {
@@ -112,6 +114,22 @@ class AdminStatisticsController extends Controller
         }
     }
 
+    public function getUniversityRequestsStats(): JsonResponse
+    {
+        try {
+            $stats = [
+                'total' => \App\Models\InternshipRequest::count(),
+                'pending' => \App\Models\InternshipRequest::where('status', 'pending')->count(),
+                'accepted' => \App\Models\InternshipRequest::where('status', 'accepted')->count(),
+                'rejected' => \App\Models\InternshipRequest::where('status', 'rejected')->count(),
+            ];
+
+            return response()->json(['data' => $stats]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function getAllStatistics(): JsonResponse
     {
         try {
@@ -122,6 +140,7 @@ class AdminStatisticsController extends Controller
             $totalPosts = Post::count();
             $totalApplications = Application::count();
             $totalSkills = Skill::where('is_active', true)->count();
+            $totalRequests = InternshipRequest::count();
 
             $skillsDistribution = Skill::where('is_active', true)
                 ->withCount('seekers')
@@ -160,6 +179,14 @@ class AdminStatisticsController extends Controller
                     ];
                 })->values();
 
+
+            $universityRequestsStats = [
+                'total' => $totalRequests,
+                'pending' => InternshipRequest::where('status', 'pending')->count(),
+                'accepted' => InternshipRequest::where('status', 'accepted')->count(),
+                'rejected' => InternshipRequest::where('status', 'rejected')->count(),
+            ];
+
             return response()->json([
                 'data' => [
                     'overview' => [
@@ -170,10 +197,12 @@ class AdminStatisticsController extends Controller
                         'totalPosts' => $totalPosts,
                         'totalApplications' => $totalApplications,
                         'totalSkills' => $totalSkills,
+                        'totalRequests' => $totalRequests,
                     ],
                     'skillsDistribution' => $skillsDistribution,
                     'technologyDemand' => $technologyDemand,
                     'applicationsStats' => $applicationsStats,
+                    'universityRequestsStats' => $universityRequestsStats,
                     'usersBreakdown' => $usersBreakdown,
                 ]
             ]);

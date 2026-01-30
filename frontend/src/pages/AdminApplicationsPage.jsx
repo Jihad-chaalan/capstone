@@ -203,11 +203,11 @@ const AdminApplicationsPage = () => {
                   <span className="admin-detail-label">Applied Date:</span>
                   <span className="admin-detail-value">
                     {new Date(
-                      selectedApplication.created_at
+                      selectedApplication.created_at,
                     ).toLocaleDateString()}{" "}
                     at{" "}
                     {new Date(
-                      selectedApplication.created_at
+                      selectedApplication.created_at,
                     ).toLocaleTimeString()}
                   </span>
                 </div>

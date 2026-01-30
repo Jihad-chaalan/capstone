@@ -9,6 +9,7 @@ import {
   TechnologyDemandChart,
   ApplicationsStatsChart,
   ActivityOverviewChart,
+  UniversityRequestsChart,
 } from "../pages/AdminCharts";
 
 const AdminDashboard = () => {
@@ -19,6 +20,7 @@ const AdminDashboard = () => {
   const [skillsDistribution, setSkillsDistribution] = useState([]);
   const [technologyDemand, setTechnologyDemand] = useState([]);
   const [applicationsStats, setApplicationsStats] = useState(null);
+  const [universityRequestsStats, setUniversityRequestsStats] = useState(null);
   const [stats, setStats] = useState({
     totalUsers: 0,
     seekers: 0,
@@ -27,6 +29,7 @@ const AdminDashboard = () => {
     totalApplications: 0,
     totalPosts: 0,
     skills: 0,
+    totalRequests: 0,
   });
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
@@ -57,12 +60,14 @@ const AdminDashboard = () => {
             totalApplications: data.overview.totalApplications || 0,
             totalPosts: data.overview.totalPosts || 0,
             skills: data.overview.totalSkills || 0,
+            totalRequests: data.overview.totalRequests || 0,
           });
 
           setUsersBreakdown(data.usersBreakdown || []);
           setSkillsDistribution(data.skillsDistribution || []);
           setTechnologyDemand(data.technologyDemand || []);
           setApplicationsStats(data.applicationsStats || {});
+          setUniversityRequestsStats(data.universityRequestsStats || {});
         } catch (error) {
           // Fallback to old endpoints
           console.log("New endpoint failed, using legacy endpoints...", error);
@@ -353,6 +358,28 @@ const AdminDashboard = () => {
               <p className="admin-stat-label">Manage Skills</p>
             </div> */}
           </div>
+          <div className="admin-stat-card">
+            <div className="admin-stat-icon admin-stat-icon-purple">
+              <svg
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <div className="admin-stat-content">
+              <p className="admin-stat-label">University Requests</p>
+              <p className="admin-stat-value">{stats.totalRequests || 0}</p>
+            </div>
+          </div>
         </div>
 
         {/* Charts Section */}
@@ -362,6 +389,7 @@ const AdminDashboard = () => {
           <SkillsDistributionChart data={skillsDistribution} />
           <TechnologyDemandChart data={technologyDemand} />
           <ApplicationsStatsChart data={applicationsStats} />
+          <UniversityRequestsChart data={universityRequestsStats} />
         </div>
 
         {/* Quick Links */}

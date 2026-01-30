@@ -77,8 +77,8 @@ const SeekerPublicProfilePage = () => {
     seeker.photo && seeker.photo.startsWith("http")
       ? seeker.photo
       : seeker.photo
-      ? `${import.meta.env.VITE_API_URL}/storage/${seeker.photo}`
-      : "";
+        ? `${import.meta.env.VITE_API_URL}/storage/${seeker.photo}`
+        : "";
 
   const skills = seeker.skillsList || seeker.skills_list || seeker.skills || [];
   const projects = seeker.projects || [];
@@ -99,7 +99,7 @@ const SeekerPublicProfilePage = () => {
   ];
   const completeness = Math.round(
     (completenessFactors.filter(Boolean).length / completenessFactors.length) *
-      100
+      100,
   );
 
   return (

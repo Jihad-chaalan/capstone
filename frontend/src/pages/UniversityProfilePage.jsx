@@ -53,7 +53,7 @@ const UniversityProfilePage = () => {
             ? university.logo.startsWith("http")
               ? university.logo
               : `${import.meta.env.VITE_API_URL}/storage/${university.logo}`
-            : ""
+            : "",
         );
         setLoading(false);
       })
@@ -127,7 +127,7 @@ const UniversityProfilePage = () => {
             ? university.logo.startsWith("http")
               ? university.logo
               : `${import.meta.env.VITE_API_URL}/storage/${university.logo}`
-            : ""
+            : "",
         );
       })
       .catch(() => {
@@ -147,7 +147,7 @@ const UniversityProfilePage = () => {
       <nav className="university-profile-navbar">
         <div className="university-profile-navbar-container">
           <div className="university-profile-navbar-content">
-            <h1 className="university-profile-navbar-brand">Int Leb Web</h1>
+            <h1 className="university-profile-navbar-brand">InternLeb</h1>
             <div className="university-profile-navbar-actions">
               {/* <button
                 onClick={() => navigate("/posts")}

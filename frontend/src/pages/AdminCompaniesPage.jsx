@@ -15,6 +15,7 @@ const AdminCompaniesPage = () => {
   const [rejectReason, setRejectReason] = useState("");
   const [filter, setFilter] = useState("all");
   const menuRef = useRef(null);
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
     if (user && user.role !== "admin") {
@@ -66,16 +67,16 @@ const AdminCompaniesPage = () => {
       await api.post(`/admin/companies/${companyId}/verify`);
       const res = await api.get("/admin/companies");
       setCompanies(Array.isArray(res.data.data) ? res.data.data : []);
-      alert("Company verified successfully");
+      showToast("Company verified successfully", "success");
     } catch (error) {
       console.error("Error verifying company:", error);
-      alert("Failed to verify company");
+      showToast("Failed to verify company", "error");
     }
   };
 
   const handleReject = async (companyId) => {
     if (!rejectReason.trim()) {
-      alert("Please provide a rejection reason");
+      showToast("Please provide a rejection reason", "error");
       return;
     }
 
@@ -87,10 +88,10 @@ const AdminCompaniesPage = () => {
       setCompanies(Array.isArray(res.data.data) ? res.data.data : []);
       setShowRejectModal(false);
       setRejectReason("");
-      alert("Company rejected");
+      showToast("Company rejected", "success");
     } catch (error) {
       console.error("Error rejecting company:", error);
-      alert("Failed to reject company");
+      showToast("Failed to reject company", "error");
     }
   };
 
@@ -111,6 +112,13 @@ const AdminCompaniesPage = () => {
       console.error("Error viewing certificate:", error);
       alert("Failed to load certificate");
     }
+  };
+
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "" });
+    }, 3000);
   };
 
   const getStatusBadge = (status) => {
@@ -134,6 +142,9 @@ const AdminCompaniesPage = () => {
 
   return (
     <div className="admin-page">
+      {toast.show && (
+        <div className={`toast toast-${toast.type}`}>{toast.message}</div>
+      )}
       <nav className="admin-navbar">
         <div className="admin-navbar-content">
           <h2 className="admin-navbar-title">Company Verification</h2>

@@ -84,7 +84,7 @@ const CompanyRequestsPage = () => {
       <nav className="requests-navbar">
         <div className="requests-navbar-container">
           <div className="requests-navbar-content">
-            <h1 className="requests-navbar-brand">Int Leb Web</h1>
+            <h1 className="requests-navbar-brand">InternLeb</h1>
             <div className="requests-navbar-actions">
               <button
                 onClick={() => navigate("/company/profile")}
@@ -157,7 +157,7 @@ const CompanyRequestsPage = () => {
                     <h3 className="request-card-title">{request.position}</h3>
                     <span
                       className={`request-status-badge ${getRequestStatusBadge(
-                        request.status
+                        request.status,
                       )}`}
                     >
                       {request.status}

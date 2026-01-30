@@ -42,7 +42,7 @@ const SeekerApplicationsPage = () => {
               className="seeker-posts-navbar-brand"
               onClick={() => navigate("/")}
             >
-              Int Leb Web
+              InternLeb
             </h1>
             <div className="seeker-posts-navbar-actions">
               <button

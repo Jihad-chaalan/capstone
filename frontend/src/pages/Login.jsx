@@ -69,7 +69,7 @@ export default function Login() {
                 />
               </svg>
             </div>
-            <h1 className="auth-brand-title">Int Leb Web</h1>
+            <h1 className="auth-brand-title">InternLeb</h1>
           </div>
 
           <div className="auth-info-content">
