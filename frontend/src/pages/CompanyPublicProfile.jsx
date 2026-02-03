@@ -112,8 +112,8 @@ const CompanyPublicProfilePage = () => {
     );
   }
 
-  const logo = company.user?.photo
-    ? `http://localhost:8000/storage/${company.user.photo}`
+  const logo = company.photo
+    ? `http://localhost:8000/storage/${company.photo}`
     : "";
   const posts = [...(company.posts || [])].sort(
     (a, b) => new Date(b.created_at) - new Date(a.created_at),

@@ -65,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/users/{id}', [UserController::class, 'show']);
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
         Route::get('/applications', [ApplicationController::class, 'index']);
+        Route::delete('/posts/{id}', [PostController::class, 'destroy']);
         // Companies verification
         Route::get('/companies', [AdminCompanyController::class, 'index']);
         Route::get('/companies/pending', [AdminCompanyController::class, 'pending']);

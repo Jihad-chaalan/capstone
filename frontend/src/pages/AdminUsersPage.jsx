@@ -71,7 +71,7 @@ const AdminUsersPage = () => {
     if (!selectedUser) return;
 
     try {
-      await api.delete(`/users/${selectedUser.id}`);
+      await api.delete(`/admin/users/${selectedUser.id}`);
       setUsers(users.filter((u) => u.id !== selectedUser.id));
       setShowDeleteModal(false);
       setShowUserModal(false);

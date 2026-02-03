@@ -37,8 +37,14 @@ class SeekerController extends Controller
      */
     public function show($id)
     {
-        $seeker = Seeker::with(['user', 'projects', 'skillsList'])->findOrFail($id);
-
+        $seeker = Seeker::with([
+            'user',
+            'projects',
+            'skillsList',
+            'ratings' => function ($query) {
+                $query->where('visible', true)->with('company.user');
+            }
+        ])->findOrFail($id);
         return response()->json([
             'success' => true,
             'data' => $seeker

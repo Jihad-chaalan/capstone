@@ -32,6 +32,13 @@ class PostController extends Controller
             $query->where('company_id', $request->company_id);
         }
 
+        if ($request->has('company')) {
+            $companyName = $request->company;
+            $query->whereHas('company.user', function ($q) use ($companyName) {
+                $q->where('name', 'like', '%' . $companyName . '%');
+            });
+        }
+
         $posts = $query->latest()->paginate(10);
 
         return response()->json([
@@ -137,7 +144,7 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
 
         // Check if user owns this post
-        if ($post->company->user_id !== $request->user()->id) {
+        if (!$request->user()->isAdmin() && $post->company->user_id !== $request->user()->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized'

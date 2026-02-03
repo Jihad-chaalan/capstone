@@ -457,7 +457,7 @@ img {
 /* Primary Button */
 .btn-primary {
   background-color: var(--color-primary-600);
-  color: var(--color-white);
+  /* color: var(--color-white); */
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 

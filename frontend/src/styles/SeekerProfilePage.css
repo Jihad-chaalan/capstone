@@ -151,7 +151,7 @@
   min-height: calc(100vh - 80px);
   position: relative;
   z-index: 1;
-  animation: fadeIn 0.6s var(--transition-base);
+  /* animation: fadeIn 0.6s var(--transition-base); */
 }
 
 /* ============================================
@@ -167,7 +167,7 @@
   top: 0;
   z-index: 1000;
   box-shadow: var(--shadow-md);
-  animation: slideIn 0.4s var(--transition-base);
+  /* animation: slideIn 0.4s var(--transition-base); */
 }
 
 .seeker-profile-navbar-container {
@@ -190,7 +190,7 @@
   color: var(--color-primary);
   margin: 0;
   letter-spacing: -0.02em;
-  transition: transform var(--transition-base);
+  /* transition: transform var(--transition-base); */
 }
 
 .seeker-profile-navbar-brand:hover {
@@ -212,7 +212,7 @@
   font-weight: 600;
   font-size: 0.9375rem;
   cursor: pointer;
-  transition: all var(--transition-base);
+  /* transition: all var(--transition-base); */
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-md);
@@ -226,7 +226,7 @@
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+  /* transition: left 0.5s; */
 }
 
 .seeker-profile-nav-button:hover {
@@ -259,7 +259,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-full);
-  transition: all var(--transition-base);
+  /* transition: all var(--transition-base); */
 }
 
 .seeker-profile-menu-button:hover {
@@ -278,7 +278,7 @@
   box-shadow: var(--shadow-xl);
   min-width: 180px;
   overflow: hidden;
-  animation: scaleIn 0.2s var(--transition-base);
+  /* animation: scaleIn 0.2s var(--transition-base); */
   transform-origin: top right;
 }
 
@@ -294,7 +294,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  transition: all var(--transition-fast);
+  /* transition: all var(--transition-fast); */
   text-align: left;
 }
 
@@ -306,7 +306,7 @@
 
 .seeker-profile-dropdown-item svg {
   flex-shrink: 0;
-  transition: transform var(--transition-base);
+  /* transition: transform var(--transition-base); */
 }
 
 .seeker-profile-dropdown-item:hover svg {
@@ -360,7 +360,7 @@
 .seeker-profile-photo-wrapper {
   flex-shrink: 0;
   position: relative;
-  animation: scaleIn 0.5s var(--transition-base) 0.3s backwards;
+  /* animation: scaleIn 0.5s var(--transition-base) 0.3s backwards; */
 }
 
 .seeker-profile-photo {
@@ -372,7 +372,7 @@
   background: white;
   box-shadow: var(--shadow-xl);
   display: block;
-  transition: transform var(--transition-base);
+  /* transition: transform var(--transition-base); */
 }
 
 .seeker-profile-photo:hover {
@@ -397,7 +397,7 @@
 .seeker-profile-details {
   flex-grow: 1;
   padding-top: 80px;
-  animation: slideIn 0.6s var(--transition-base) 0.4s backwards;
+  /* animation: slideIn 0.6s var(--transition-base) 0.4s backwards; */
 }
 
 .seeker-profile-name {
@@ -476,7 +476,7 @@
   flex-wrap: wrap;
   gap: 0.625rem;
   margin-top: 1rem;
-  animation: fadeIn 0.8s var(--transition-base) 0.5s backwards;
+  /* animation: fadeIn 0.8s var(--transition-base) 0.5s backwards; */
 }
 
 .skill-badge-display {
@@ -509,7 +509,7 @@
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-md);
-  animation: fadeIn 0.6s var(--transition-base);
+  /* animation: fadeIn 0.6s var(--transition-base); */
   transition: all var(--transition-base);
   position: relative;
   overflow: hidden;
@@ -526,7 +526,7 @@
   height: 3px;
   background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-accent));
   background-size: 200% 100%;
-  animation: shimmer 3s linear infinite;
+  /* animation: shimmer 3s linear infinite; */
 }
 
 .seeker-profile-form-card:hover,
@@ -1207,7 +1207,7 @@
   text-align: center;
   font-weight: 600;
   border: 2px solid #059669;
-  animation: scaleIn 0.3s var(--transition-base);
+  /* animation: scaleIn 0.3s var(--transition-base); */
   box-shadow: var(--shadow-md);
 }
 
@@ -1220,7 +1220,7 @@
   text-align: center;
   font-weight: 600;
   border: 2px solid #dc2626;
-  animation: scaleIn 0.3s var(--transition-base);
+  /* animation: scaleIn 0.3s var(--transition-base); */
   box-shadow: var(--shadow-md);
 }
 
@@ -1232,7 +1232,7 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-text-primary);
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; */
 }
 
 /* ============================================

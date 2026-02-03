@@ -9,7 +9,6 @@ import { useEffect, useRef } from "react";
 import { useAuthStore } from "../store/authStore";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import Dashboard from "../pages/Dashboard";
 import SeekerProfilePage from "../pages/SeekerProfilePage";
 import CompanyProfilePage from "../pages/CompanyProfilePage";
 import UniversityProfilePage from "../pages/UniversityProfilePage";
@@ -64,11 +63,10 @@ export const AppRouter = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/seekers/:id" element={<SeekerPublicProfilePage />} />
 
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/posts" element={<SeekerPostsPage />} />
           <Route path="/profile" element={<SeekerProfilePage />} />
           <Route path="/company/profile" element={<CompanyProfilePage />} />

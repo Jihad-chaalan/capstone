@@ -17,6 +17,7 @@ const SeekerPostsPage = () => {
   const [filters, setFilters] = useState({
     technology: "",
     position: "",
+    company: "",
   });
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
@@ -36,6 +37,9 @@ const SeekerPostsPage = () => {
       }
       if (filters.position.trim()) {
         params.append("position", filters.position.trim());
+      }
+      if (filters.company.trim()) {
+        params.append("company", filters.company.trim());
       }
 
       const response = await api.get(`/posts?${params.toString()}`);
@@ -228,6 +232,20 @@ const SeekerPostsPage = () => {
                 value={filters.technology}
                 onChange={handleFilterChange}
                 placeholder="e.g. React, Node.js"
+                className="seeker-posts-filter-input"
+              />
+            </div>
+            <div className="seeker-posts-filter-group">
+              <label htmlFor="company" className="seeker-posts-filter-label">
+                Company
+              </label>
+              <input
+                id="company"
+                type="text"
+                name="company"
+                value={filters.company}
+                onChange={handleFilterChange}
+                placeholder="e.g. Google, Microsoft"
                 className="seeker-posts-filter-input"
               />
             </div>

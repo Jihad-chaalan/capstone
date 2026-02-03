@@ -71,7 +71,7 @@ const AdminPostsPage = () => {
     if (!selectedPost) return;
 
     try {
-      await api.delete(`/posts/${selectedPost.id}`);
+      await api.delete(`/admin/posts/${selectedPost.id}`);
       setPosts(posts.filter((p) => p.id !== selectedPost.id));
       setShowDeletePostModal(false);
       setShowPostModal(false);
